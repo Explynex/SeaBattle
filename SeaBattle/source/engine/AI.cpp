@@ -33,6 +33,7 @@ void fieldBoarder(char field[sz][szx]) {
 }
 void horOutput(int i, bool ifboarder, char field[sz][szx])
 {
+    char letter = '@';
     for (int k = 0; k < szx - 1; k++)
     {
         if (field[i][k] == boarder)
@@ -58,10 +59,10 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
                     if (i != 0)
                         std::cout << i;
                     else if (k != 0)
-                        std::cout << k;
+                        std::cout << (char)(letter+k);
                     else
                         std::cout << " ";
-                    if (i / 10 > 0||i==0&&k/10>0)
+                    if (i / 10 > 0)
                         m++;
                 }
                 else
@@ -270,7 +271,8 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     }
 }
 void shipAdd(char field[sz][szx]) {
-    int length, x, y;
+    int length;
+    char x;
     currAmofShips++;
     std::cout << std::endl<< "Welcome to the ship placement program" << std::endl;
     std::cout << "Enter length of new ship : ";
@@ -278,7 +280,11 @@ void shipAdd(char field[sz][szx]) {
     for (int i = 0; i < length; i++)
     {
         std::cout << "Enter x" << i << " and y" << i << " : ";
-        std::cin >> sh[currAmofShips - 1].x[i] >> sh[currAmofShips - 1].y[i];
+        std::cin >> x >> sh[currAmofShips - 1].y[i];
+        if(x>=65&&x<=74)
+            sh[currAmofShips - 1].x[i] = x - 64;
+        else if(x>=97&&x<=106)
+            sh[currAmofShips - 1].x[i] = x - 96;
         field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
     }
     sh[currAmofShips - 1].length = length;
