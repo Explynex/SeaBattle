@@ -1,15 +1,16 @@
 #pragma once
 #ifndef _AI_H_
 #define _AI_H_
+const int sz = 12, szx = 12;
+
 void AI();
-void aiPlayer();
-void fieldBoarder();
-void hitShip(int x, int y);
-void shipAdd();
-void shipDrown(int shipNum);
-void shipOnfire();
-void showField();
+void aiPlayer(char field[sz][szx]);
+void fieldBoarder(char field[sz][szx]);
+void hitShip(int x, int y, char field[sz][szx]);
+void horOutput(int i, bool ifboarder, char field[sz][szx]);
 void kletochki(int i);
-void horOutput(int i);
-void GotoXY(int X, int Y);
+void shipAdd(char field[sz][szx]);
+void shipDrown(int shipNum, char field[sz][szx]);
+void shipOnfire(char field[sz][szx]);
+void showField(char field[sz][szx]);
 #endif // !_AI_H_

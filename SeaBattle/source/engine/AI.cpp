@@ -1,12 +1,13 @@
 #include <iostream>
-#include <time.h>
-#include "windows.h"
-using namespace std;
+#include <windows.h>
+#include "AI.h"
+#include "GotoXY.h"
+
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
 bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false;
-int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips;//����� ������� ��������� �� ������� ���� �� ������ 1 ����� + ��������� �� ����������� � ������ �������
+int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips; //точка первого попадания по кораблю если он больше
 const int maxamountOfShips = 5;
 const char drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' ';
 class ship {
@@ -16,9 +17,9 @@ public:
     int x[4], y[4];
 };
 ship sh[5];
-const int sz = 12, szx = 12;
-char field[sz][szx];
-void fieldBoarder() {
+char fieldPlayer[sz][szx], fieldBot[sz][szx];
+
+void fieldBoarder(char field[sz][szx]) {
     for (int i = 0; i < sz; i++)
     {
         for (int k = 0; k < szx; k++)
@@ -30,40 +31,66 @@ void fieldBoarder() {
         }
     }
 }
-void horOutput(int i)
+void horOutput(int i, bool ifboarder, char field[sz][szx])
 {
     for (int k = 0; k < szx - 1; k++)
     {
         if (field[i][k] == boarder)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | FOREGROUND_BLUE);
+            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
         else if (field[i][k] == ocean)
             SetConsoleTextAttribute(hConsole, 240);
         else if (field[i][k] == aliveSh)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN | FOREGROUND_GREEN);
+            SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN | BACKGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
         else if (field[i][k] == drownSh)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_RED | FOREGROUND_RED);
+            SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_RED);
         else
             SetConsoleTextAttribute(hConsole, 240);
-        for (int m = 0; m < 6; m++)
-            cout << field[i][k];
+        if (ifboarder|| field[i][k] != boarder)
+            for (int m = 0; m < 6; m++)
+                std::cout << field[i][k];
+        else if(boarder&&field[i][k]==boarder)
+        {      
+            for (int m = 0; m < 6; m++)
+            {
+                if (m == 3|| i / 10 > 0&&m==2)
+                {
+                    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+                    if (i != 0)
+                        std::cout << i;
+                    else if (k != 0)
+                        std::cout << k;
+                    else
+                        std::cout << " ";
+                    if (i / 10 > 0||i==0&&k/10>0)
+                        m++;
+                }
+                else
+                {
+                    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+                    std::cout << field[i][k];
+                }
+                    
+            }
+        }
+
         if (k <= szx - 2 && k != 0)
         {
-            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | FOREGROUND_BLUE);
-            cout << boarder << boarder;
+            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+            std::cout << boarder << boarder;
         }
     }
 
 }
 void kletochki(int i)
 {
-    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | FOREGROUND_BLUE);
+    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE| BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
     for (int i = 0; i < szx * 6 + 14; i++)
-        cout << boarder;
+        std::cout << boarder;
     SetConsoleTextAttribute(hConsole, 15);
     if (i != sz - 2)
-        cout << endl;
+        std::cout << std::endl;
 }
-void showField() {
+void showField(char field[sz][szx]) {
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     Pos.X = 0;
     Pos.Y = 0;
@@ -72,20 +99,20 @@ void showField() {
     FlushConsoleInputBuffer(hConsole);
     for (int i = 0; i < sz - 1; i++)
     {
-        horOutput(i);
+        horOutput(i, true,field);
         SetConsoleTextAttribute(hConsole, 15);
-        cout << endl;
-        horOutput(i);
+        std::cout << std::endl;
+        horOutput(i, false, field);//if false - std::cout grid number
         SetConsoleTextAttribute(hConsole, 15);
-        cout << endl;
-        horOutput(i);
+        std::cout << std::endl;
+        horOutput(i, true, field);
         SetConsoleTextAttribute(hConsole, 15);
-        cout << endl;
+        std::cout << std::endl;
         if (i != sz - 1 && i != 0)
             kletochki(i);
     }
 }
-void shipDrown(int shipNum) {//������� ���������� �������
+void shipDrown(int shipNum, char field[sz][szx]) { //функция затопления корабля
     d1 = 1;
     d2 = 1;
     d3 = 1;
@@ -111,7 +138,7 @@ void shipDrown(int shipNum) {//������� ���������
         }
     }
 }
-void hitShip(int x, int y) {//������� ������ �� � ������� ��� ���������
+void hitShip(int x, int y, char field[sz][szx]) { //функция снятия хп у корабля при попадании
     for (int k = 0; k < maxamountOfShips; k++)
     {
         for (int i = 0; i < sh[k].length; i++)
@@ -120,26 +147,26 @@ void hitShip(int x, int y) {//������� ������ �� �
             {
 
                 sh[k].hp--;
-                //cout<<"Current ship hp "<<sh[k].hp<<endl;
+                //std::cout<<"Current ship hp "<<sh[k].hp<<std::endl;
                 if (sh[k].hp == 0)
                 {
-                    //   cout<<"game over"<<endl;
-                    shipDrown(k);
+                    //   std::cout<<"game over"<<std::endl;
+                    shipDrown(k,field);
                 }
             }
         }
     }
 }
-void shipOnfire() {//������� �� ��� ����������� ��� �� ��������� �������
+void shipOnfire(char field[sz][szx]) {//функция ии для продолжения боя по найденому кораблю
     int x = xOld, y = yOld;
-    //  cout<<"Ship on fire"<<endl;
+    //  std::cout<<"Ship on fire"<<std::endl;
     while (shOnfire)
     {
-        while (shOnfire)//��������� ����������� ��� ������ ��������
+        while (shOnfire) //генерация направления для нового выстрела
         {
             srand(time(NULL));
             direction = rand() % 4 + 1;
-            // cout<<"generated dir "<<direction<<endl;
+            // std::cout<<"generated dir "<<direction<<std::endl;
             if (direction == 1 && d1 && (field[yOld - dx1][xOld] != missed && field[yOld - dx1][xOld] != drownSh && field[yOld - dx1][xOld] != boarder))
             {
                 y = yOld - dx1;
@@ -162,11 +189,11 @@ void shipOnfire() {//������� �� ��� �������
             }
             Sleep(1000);
         }
-        if (field[y][x] != aliveSh)//�� �����
+        if (field[y][x] != aliveSh) //не попал
         {
-            //  cout<<d1<<d2<<d3<<d4<<" "; ���� �����������
+            //  std::cout<<d1<<d2<<d3<<d4<<" "; тест направлений
             field[y][x] = missed;
-            //���������� ����������� � ������� ��� ������ �������
+            //отсеивание направлений в котором нет блоков корабля
             if (direction == 1)
                 d1 = false;
             if (direction == 2)
@@ -175,15 +202,15 @@ void shipOnfire() {//������� �� ��� �������
                 d3 = false;
             if (direction == 4)
                 d4 = false;
-            showField();
+            showField(field);
             Sleep(3000);
-            // cout<<d1<<d2<<d3<<d4<<endl; ���� �����������
+            // std::cout<<d1<<d2<<d3<<d4<<std::endl; тест направлений
             break;
         }
-        else//�����
+        else //попал
         {
             field[y][x] = drownSh;
-            if (direction == 1 || direction == 3)//��� �� � ��� � ��� ���������
+            if (direction == 1 || direction == 3) //лок по х или у при попадании 
             {
                 if (direction == 1)
                     dx1++;
@@ -201,62 +228,62 @@ void shipOnfire() {//������� �� ��� �������
                 d1 = false;
                 d3 = false;
             }
-            hitShip(x, y);
+            hitShip(x, y,field);
         }
-        showField();
+        showField(field);
         Sleep(3000);
     }
 }
-void aiPlayer()//�������� ������� �� ��� ���
+void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
     int x, y;
-    if (shOnfire)//� ������� ��� ������ �� ������� �� �� ����������
+    if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
     {
-        shipOnfire();
+        shipOnfire(field);
     }
     else
     {
         srand(time(NULL));
-        while (true)//������ ��������� �������
+        while (true) //первый рандомный выстрел
         {
             x = rand() % (sz - 1) + 1;
             y = rand() % (sz - 1) + 1;
             if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
                 break;
         }
-        if (field[y][x] == aliveSh)//���� �����
+        if (field[y][x] == aliveSh) //если попал
         {
-            hitShip(x, y);
+            hitShip(x, y,field);
             field[y][x] = drownSh;
             xOld = x;
             yOld = y;
             shOnfire = true;
-            showField();
+            showField(field);
             Sleep(3000);
-            shipOnfire();
+            shipOnfire(field);
 
         }
-        else//���� �� ����� ������ ���������
+        else //если не попал первым выстрелом
             field[y][x] = missed;
-        showField();
+        showField(field);
         Sleep(3000);
     }
 }
-void shipAdd() {
+void shipAdd(char field[sz][szx]) {
     int length, x, y;
     currAmofShips++;
-    cout << endl << "Welcome to the ship placement program" << endl;
-    cout << "Enter length of new ship : ";
-    cin >> length;
+    std::cout << std::endl<< "Welcome to the ship placement program" << std::endl;
+    std::cout << "Enter length of new ship : ";
+    std::cin >> length;
     for (int i = 0; i < length; i++)
     {
-        cout << "Enter x" << i << " and y" << i << " : ";
-        cin >> sh[currAmofShips - 1].x[i] >> sh[currAmofShips - 1].y[i];
+        std::cout << "Enter x" << i << " and y" << i << " : ";
+        std::cin >> sh[currAmofShips - 1].x[i] >> sh[currAmofShips - 1].y[i];
         field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
     }
     sh[currAmofShips - 1].length = length;
     sh[currAmofShips - 1].hp = length;
-    showField();
+    showField(field);
 }
 void AI()
 {
@@ -266,12 +293,13 @@ void AI()
     SetConsoleWindowInfo(out_handle, true, &src);
     SetConsoleScreenBufferSize(out_handle, crd);
     */
-    string mode;
+    std::string mode;
     int m;
-    fieldBoarder();
-    field[5][5] = aliveSh;
-    field[5][4] = aliveSh;
-    field[5][3] = aliveSh;
+    fieldBoarder(fieldPlayer);
+    fieldBoarder(fieldBot);
+    fieldPlayer[5][5] = aliveSh;
+    fieldPlayer[5][4] = aliveSh;
+    fieldPlayer[5][3] = aliveSh;
     sh[0].length = 3;
     sh[0].hp = 3;
     sh[0].x[0] = 5;
@@ -281,10 +309,10 @@ void AI()
     sh[0].x[2] = 3;
     sh[0].y[2] = 5;
 
-    field[2][5] = aliveSh;
-    field[2][4] = aliveSh;
-    field[2][3] = aliveSh;
-    field[2][2] = aliveSh;
+    fieldPlayer[2][5] = aliveSh;
+    fieldPlayer[2][4] = aliveSh;
+    fieldPlayer[2][3] = aliveSh;
+    fieldPlayer[2][2] = aliveSh;
     sh[1].length = 4;
     sh[1].hp = 4;
     sh[1].x[0] = 2;
@@ -296,26 +324,17 @@ void AI()
     sh[1].x[3] = 5;
     sh[1].y[3] = 2;
     currAmofShips = 2;
-    while (mode != "/exit") {
-        cout << endl << "'/game' - чтобы начать игру,'/construct' - перейти в конструктор кораблей\n";
-        cin >> mode;
-        if (mode == "/exit")
-            break;
-        if (mode == "/construct")
+    while (true) {
+        std::cout << std::endl << "Add or game mode ? ";
+        std::cin >> mode;
+        showField(fieldPlayer);
+        if (mode == "add")
         {
-            while (mode != "/stop") {
-                system("cls");
-                showField();
-                std::cout << std::endl << " '/add' - чтобы добавить еще,'/stop' - чтобы выйти" << std::endl;
-                cin >> mode;
-                if (mode == "/stop")
-                    break;
-                if (mode == "/add") {
-                    shipAdd();
-                    system("cls");
-                    showField();
-                }
-            }
+            shipAdd(fieldPlayer);
+            system("cls");
+            showField(fieldPlayer);
+            std::cout << std::endl << "Game mode ? ";
+            std::cin >> mode;
         }
         /*while (mode == "debug")
         {
@@ -323,10 +342,11 @@ void AI()
             //showField();
             //system("pause");
         }*/
-        while (mode == "/game")
+        while (mode == "game")
         {
-            aiPlayer();
+            aiPlayer(fieldPlayer);
+
         }
     }
-
 }
+        

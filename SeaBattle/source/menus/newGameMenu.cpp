@@ -2,6 +2,7 @@
 #include <iostream>
 #include "GotoXY.h"
 #include "AI.h"
+#include "newGameMenu.h"
 
 
 int newGameMenu() {
@@ -65,7 +66,7 @@ int newGameMenu() {
                 switch (point) {
                 case 0: {
                     AI();
-                    break;
+                    return 0;
                 }
                 case 1: {
                     std::cout << "\nComing soon..." << std::endl;
@@ -77,13 +78,12 @@ int newGameMenu() {
                 }
                 case 3: {
                     return 0;
-                    break;
                 }
                 }
             }
         }
-
+        
         Sleep(110);
     }
-	return 0;
+    return 0;
 }
