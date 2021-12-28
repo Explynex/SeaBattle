@@ -144,16 +144,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\engine\GotoXY.cpp" />
+    <ClCompile Include="source\engine\windowSize.cpp" />
     <ClCompile Include="source\menus\newGameMenu.cpp" />
-    <ClCompile Include="source\engine\AI.cpp" />
+    <ClCompile Include="source\engine\core.cpp" />
     <ClCompile Include="source\menus\menu.cpp" />
     <ClCompile Include="source\SeaBattle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\AI.h" />
+    <ClInclude Include="headers\core.h" />
     <ClInclude Include="headers\GotoXY.h" />
     <ClInclude Include="headers\menu.h" />
     <ClInclude Include="headers\newGameMenu.h" />
+    <ClInclude Include="headers\windowSize.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

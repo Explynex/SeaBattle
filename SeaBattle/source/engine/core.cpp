@@ -1,6 +1,6 @@
 #include <iostream>
 #include <windows.h>
-#include "AI.h"
+#include "core.h"
 #include "GotoXY.h"
 
 HANDLE hConsole;
@@ -237,59 +237,108 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 }
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
-    int x, y;
-    if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
-    {
-        shipOnfire(field);
-    }
-    else
-    {
-        srand(time(NULL));
-        while (true) //первый рандомный выстрел
+    while (true) {
+        int x, y;
+        if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
         {
-            x = rand() % (sz - 1) + 1;
-            y = rand() % (sz - 1) + 1;
-            if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
-                break;
+            shipOnfire(field);
         }
-        if (field[y][x] == aliveSh) //если попал
+        else
         {
-            hitShip(x, y,field);
-            field[y][x] = drownSh;
-            xOld = x;
-            yOld = y;
-            shOnfire = true;
+            srand(time(NULL));
+            while (true) //первый рандомный выстрел
+            {
+                x = rand() % (sz - 1) + 1;
+                y = rand() % (sz - 1) + 1;
+                if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
+                    break;
+            }
+            if (field[y][x] == aliveSh) //если попал
+            {
+                hitShip(x, y, field);
+                field[y][x] = drownSh;
+                xOld = x;
+                yOld = y;
+                shOnfire = true;
+                showField(field);
+                Sleep(3000);
+                shipOnfire(field);
+
+            }
+            else //если не попал первым выстрелом
+                field[y][x] = missed;
             showField(field);
             Sleep(3000);
-            shipOnfire(field);
-
         }
-        else //если не попал первым выстрелом
-            field[y][x] = missed;
-        showField(field);
-        Sleep(3000);
     }
 }
-void shipAdd(char field[sz][szx]) {
-    int length;
-    char x;
-    currAmofShips++;
-    std::cout << std::endl<< "Welcome to the ship placement program" << std::endl;
-    std::cout << "Enter length of new ship : ";
-    std::cin >> length;
-    for (int i = 0; i < length; i++)
-    {
-        std::cout << "Enter x" << i << " and y" << i << " : ";
-        std::cin >> x >> sh[currAmofShips - 1].y[i];
-        if(x>=65&&x<=74)
-            sh[currAmofShips - 1].x[i] = x - 64;
-        else if(x>=97&&x<=106)
-            sh[currAmofShips - 1].x[i] = x - 96;
-        field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
+void shipConstructor(char field[sz][szx]) {
+    while (true) {
+        system("cls");
+        showField(fieldPlayer);
+        GotoXY(width / 2 + 20, height / 2 - 23);
+        std::cout << "█  █ ████ █  █ ████ ███ ████ █ █ █  █ ███ ████ ████";
+        GotoXY(width / 2 + 20, height / 2 - 22);
+        std::cout << "█ █  █  █ █  █ █  █  █  █  █ █ █ █ █   █  █  █ █  █";
+        GotoXY(width / 2 + 20, height / 2 - 21);
+        std::cout << "██   █  █ ████ █     █  ████ ███ ██    █  █  █ ████";
+        GotoXY(width / 2 + 20, height / 2 - 20);
+        std::cout << "█ █  █  █ █  █ █  █  █  █      █ █ █   █  █  █ █";
+        GotoXY(width / 2 + 20, height / 2 - 19);
+        std::cout << "█  █ ████ █  █ ████  █  █    ███ █  █  █  ████ █";
+        GotoXY(width / 2 + 25, height / 2 - 17);
+        std::cout << "	   		           ▀▀";
+        GotoXY(width / 2 + 25, height / 2 - 16);
+        std::cout << "█  █ ████ ████ ████ ████   ██ ███ █  █";
+        GotoXY(width / 2 + 25, height / 2 - 15);
+        std::cout << "█ █  █  █ █  █ █  █ █     █ █ █   █  █";
+        GotoXY(width / 2 + 25, height / 2 - 14);
+        std::cout << "██   █  █ ████ ████ ████ █  █ ███ █ ██";
+        GotoXY(width / 2 + 25, height / 2 - 13);
+        std::cout << "█ █  █  █ █    █  █ █  █ █  █ █   ██ █";
+        GotoXY(width / 2 + 25, height / 2 - 12);
+        std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
+        int length;
+        char x;
+        currAmofShips++;
+        GotoXY(width / 2 + 20, height / 2 - 4);
+        std::cout << "                                ";  //очистка ввода
+        GotoXY(width / 2 + 20, height / 2 - 3);
+        std::cout << "                                ";
+        GotoXY(width / 2 + 20, height / 2 - 2);
+        std::cout << "                                ";
+        GotoXY(width / 2 + 20, height / 2 - 1);
+        std::cout << "                                ";
+        do {
+            GotoXY(width / 2 + 20, height / 2 - 5);
+            std::cout << "Введите размерность корабля:                      ";
+            GotoXY(width / 2 + 49, height / 2 - 5);
+            std::cin >> length;
+            if (length > 4) {
+                GotoXY(width / 2 + 20, height / 2 - 4);
+                std::cout << "Максимальный размер корабля - 4 клетки!";
+                std::cin.ignore();
+                std::cin.get();
+                GotoXY(width / 2 + 20, height / 2 - 4);
+                std::cout << "                                         ";
+            }
+        } while (length > 4);
+        for (int i = 0; i < length; i++)
+        {
+            GotoXY(width / 2 + 20, height / 2 - 4 + i);
+            std::cout << "Enter x" << i << " and y" << i << " : ";
+            std::cin >> x >> sh[currAmofShips - 1].y[i];
+            if (x >= 65 && x <= 74)
+                sh[currAmofShips - 1].x[i] = x - 64;
+            else if (x >= 97 && x <= 106)
+                sh[currAmofShips - 1].x[i] = x - 96;
+            field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
+            GotoXY(width / 2 + 20, height / 2 - 4 + i);
+        }
+        sh[currAmofShips - 1].length = length;
+        sh[currAmofShips - 1].hp = length;
+        shipConstructor(fieldPlayer);
     }
-    sh[currAmofShips - 1].length = length;
-    sh[currAmofShips - 1].hp = length;
-    showField(field);
 }
 void AI()
 {
@@ -299,7 +348,6 @@ void AI()
     SetConsoleWindowInfo(out_handle, true, &src);
     SetConsoleScreenBufferSize(out_handle, crd);
     */
-    std::string mode;
     int m;
     fieldBoarder(fieldPlayer);
     fieldBoarder(fieldBot);
@@ -314,7 +362,6 @@ void AI()
     sh[0].y[1] = 5;
     sh[0].x[2] = 3;
     sh[0].y[2] = 5;
-
     fieldPlayer[2][5] = aliveSh;
     fieldPlayer[2][4] = aliveSh;
     fieldPlayer[2][3] = aliveSh;
@@ -330,29 +377,15 @@ void AI()
     sh[1].x[3] = 5;
     sh[1].y[3] = 2;
     currAmofShips = 2;
-    while (true) {
-        std::cout << std::endl << "Add or game mode ? ";
-        std::cin >> mode;
-        showField(fieldPlayer);
-        if (mode == "add")
-        {
-            shipAdd(fieldPlayer);
-            system("cls");
-            showField(fieldPlayer);
-            std::cout << std::endl << "Game mode ? ";
-            std::cin >> mode;
-        }
-        /*while (mode == "debug")
-        {
-            aiPlayer();
-            //showField();
-            //system("pause");
-        }*/
-        while (mode == "game")
-        {
-            aiPlayer(fieldPlayer);
-
-        }
+    std::string mode;
+    for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
+        GotoXY(width / 2-20, height - 20);
+        draw_progress_bar(i);
+        Sleep(3);
     }
+    GotoXY(width / 2 - 10, height - 18);
+        system("pause");
+        shipConstructor(fieldPlayer);
+    
 }
         

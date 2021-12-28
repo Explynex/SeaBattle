@@ -21,7 +21,7 @@
     <ClCompile Include="source\menus\menu.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\AI.cpp">
+    <ClCompile Include="source\engine\core.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="source\menus\newGameMenu.cpp">
@@ -30,18 +30,24 @@
     <ClCompile Include="source\engine\GotoXY.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\windowSize.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\menu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\AI.h">
+    <ClInclude Include="headers\core.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="headers\newGameMenu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="headers\GotoXY.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\windowSize.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

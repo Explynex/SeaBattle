@@ -3,7 +3,6 @@
 #include "newGameMenu.h"
 #include "GotoXY.h"
 
-
 int menu() {
     std::string Menu[3] = { " Создать новую игру\n", " Как играть\n", " Выйти\n" };
     int pointer = 0;
@@ -11,34 +10,34 @@ int menu() {
     while (true)
     {
         system("cls");
-        GotoXY(5, 1);
-        std::cout << "             Морской бой\n";
-        GotoXY(5, 2);
+        GotoXY(width/2-1, height - 28);
+        std::cout << "Морской бой\n";
+        GotoXY(width/2-13, height - 27);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╔═══════════════════════════════════╗" << std::endl;
         for (int i = 0; i < 3; ++i)
         {
             if (i == pointer)
             {
-                GotoXY(5, i + 3);
+                GotoXY(width/2-13, height-26+i);
                 std::cout << "║";
-                GotoXY(41, i + 3);
+                GotoXY(width/2+23, height - 26 + i);
                 std::cout << "║";
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-                GotoXY(6, i + 3);
+                GotoXY(width/2-12, height - 26 + i);
                 std::cout << " >> " << Menu[i];
-                GotoXY(37, i + 3);
+                GotoXY(width/2-51, height - 26 + i);
             }
             else
             {
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-                GotoXY(5, i + 3);
+                GotoXY(width/2-13, height - 26 + i);
                 std::cout << "║" << Menu[i];
-                GotoXY(41, i + 3);
+                GotoXY(width/2+23, height - 26 + i);
                 std::cout << "║";
             }
         }
-        GotoXY(5, 6);
+        GotoXY(width/2-13, height - 23);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╚═══════════════════════════════════╝" << std::endl;
 
