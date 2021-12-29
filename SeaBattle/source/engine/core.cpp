@@ -1,8 +1,9 @@
 #include <iostream>
 #include <windows.h>
+#include <fstream>  
 #include "core.h"
 #include "GotoXY.h"
-
+#define SHIP_COUNT 10
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
@@ -16,7 +17,7 @@ public:
     int hp;
     int x[4], y[4];
 };
-ship sh[5];
+ship sh[SHIP_COUNT];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
 
 void fieldBoarder(char field[sz][szx]) {
@@ -273,7 +274,8 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     }
 }
 void shipConstructor(char field[sz][szx]) {
-    while (true) {
+    char choice;
+    for (int counter = 0; counter < 2; counter++) {
         system("cls");
         showField(fieldPlayer);
         GotoXY(width / 2 + 20, height / 2 - 23);
@@ -300,15 +302,8 @@ void shipConstructor(char field[sz][szx]) {
         std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
         int length;
         char x;
+        cleaning();
         currAmofShips++;
-        GotoXY(width / 2 + 20, height / 2 - 4);
-        std::cout << "                                ";  //очистка ввода
-        GotoXY(width / 2 + 20, height / 2 - 3);
-        std::cout << "                                ";
-        GotoXY(width / 2 + 20, height / 2 - 2);
-        std::cout << "                                ";
-        GotoXY(width / 2 + 20, height / 2 - 1);
-        std::cout << "                                ";
         do {
             GotoXY(width / 2 + 20, height / 2 - 5);
             std::cout << "Введите размерность корабля:                      ";
@@ -333,12 +328,58 @@ void shipConstructor(char field[sz][szx]) {
             else if (x >= 97 && x <= 106)
                 sh[currAmofShips - 1].x[i] = x - 96;
             field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
-            GotoXY(width / 2 + 20, height / 2 - 4 + i);
         }
         sh[currAmofShips - 1].length = length;
         sh[currAmofShips - 1].hp = length;
-        shipConstructor(fieldPlayer);
     }
+    cleaning();
+    showField(fieldPlayer);
+  /*GotoXY(width / 2 + 20, height / 2 - 5);
+    std::cout << "Сохранить расстановку? y" << R"(\n: )" << "                     ";
+    GotoXY(width / 2 + 48, height / 2 - 5);
+    std::cin >> choice;
+    switch (choice) {
+    case'y':
+        saveInFile();
+        loadFromFile();
+        showField(fieldPlayer);
+        break;
+    }
+    system("pause");*/
+    aiPlayer(fieldPlayer);
+}
+/*void saveInFile() { //сохранениие поля игрока в файл
+    std::ofstream fout("out.txt", std::ios::out);
+    for (int i = 0; i < (sz); i++)
+    {
+        for (int j = 0; j < (szx); j++)
+        {
+            fout << fieldPlayer[i][j] << " ";
+        }
+    }
+    std::cout << "Succes!";
+
+}
+void loadFromFile() { //загрузка
+    std::ifstream fin("out.txt", std::ios::out);
+    for (int i = 0; i < (sz); i++)
+    {
+        for (int j = 0; j < (szx); j++)
+        {
+            fin >> fieldPlayer[i][j];
+        }
+    }
+    std::cout << "Succes!";
+}*/
+void cleaning() {
+    GotoXY(width / 2 + 20, height / 2 - 4);
+    std::cout << "                                ";  //очистка ввода
+    GotoXY(width / 2 + 20, height / 2 - 3);
+    std::cout << "                                ";
+    GotoXY(width / 2 + 20, height / 2 - 2);
+    std::cout << "                                ";
+    GotoXY(width / 2 + 20, height / 2 - 1);
+    std::cout << "                                ";
 }
 void AI()
 {
@@ -348,35 +389,8 @@ void AI()
     SetConsoleWindowInfo(out_handle, true, &src);
     SetConsoleScreenBufferSize(out_handle, crd);
     */
-    int m;
     fieldBoarder(fieldPlayer);
     fieldBoarder(fieldBot);
-    fieldPlayer[5][5] = aliveSh;
-    fieldPlayer[5][4] = aliveSh;
-    fieldPlayer[5][3] = aliveSh;
-    sh[0].length = 3;
-    sh[0].hp = 3;
-    sh[0].x[0] = 5;
-    sh[0].y[0] = 5;
-    sh[0].x[1] = 4;
-    sh[0].y[1] = 5;
-    sh[0].x[2] = 3;
-    sh[0].y[2] = 5;
-    fieldPlayer[2][5] = aliveSh;
-    fieldPlayer[2][4] = aliveSh;
-    fieldPlayer[2][3] = aliveSh;
-    fieldPlayer[2][2] = aliveSh;
-    sh[1].length = 4;
-    sh[1].hp = 4;
-    sh[1].x[0] = 2;
-    sh[1].y[0] = 2;
-    sh[1].x[1] = 3;
-    sh[1].y[1] = 2;
-    sh[1].x[2] = 4;
-    sh[1].y[2] = 2;
-    sh[1].x[3] = 5;
-    sh[1].y[3] = 2;
-    currAmofShips = 2;
     std::string mode;
     for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
         GotoXY(width / 2-20, height - 20);
