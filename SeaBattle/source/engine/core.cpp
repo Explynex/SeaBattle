@@ -4,6 +4,7 @@
 #include "core.h"
 #include "GotoXY.h"
 #define SHIP_COUNT 10
+
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
@@ -13,7 +14,7 @@ const int maxamountOfShips = 5;
 const char drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' ';
 class ship {
 public:
-    int length;
+    int length = {0};
     int hp;
     int x[4], y[4];
 };
@@ -38,13 +39,13 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
     for (int k = 0; k < szx - 1; k++)
     {
         if (field[i][k] == boarder)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+            setColor(LightBlue, LightBlue);
         else if (field[i][k] == ocean)
             SetConsoleTextAttribute(hConsole, 240);
         else if (field[i][k] == aliveSh)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN | BACKGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            setColor(LightGreen, LightGreen);
         else if (field[i][k] == drownSh)
-            SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_RED);
+            setColor(Red, Red);
         else
             SetConsoleTextAttribute(hConsole, 240);
         if (ifboarder|| field[i][k] != boarder)
@@ -56,7 +57,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
             {
                 if (m == 3|| i / 10 > 0&&m==2)
                 {
-                    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+                    setColor(White, LightBlue);
                     if (i != 0)
                         std::cout << i;
                     else if (k != 0)
@@ -68,7 +69,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
                 }
                 else
                 {
-                    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+                    setColor(LightBlue, LightBlue);
                     std::cout << field[i][k];
                 }
                     
@@ -77,7 +78,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
 
         if (k <= szx - 2 && k != 0)
         {
-            SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+            setColor(LightBlue, LightBlue);
             std::cout << boarder << boarder;
         }
     }
@@ -85,7 +86,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
 }
 void kletochki(int i)
 {
-    SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE| BACKGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    setColor(LightBlue, LightBlue);
     for (int i = 0; i < szx * 6 + 14; i++)
         std::cout << boarder;
     SetConsoleTextAttribute(hConsole, 15);
@@ -262,14 +263,14 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
                 yOld = y;
                 shOnfire = true;
                 showField(field);
-                Sleep(3000);
+                Sleep(300);
                 shipOnfire(field);
 
             }
             else //если не попал первым выстрелом
                 field[y][x] = missed;
             showField(field);
-            Sleep(3000);
+            Sleep(300);
         }
     }
 }
