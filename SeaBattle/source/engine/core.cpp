@@ -3,24 +3,48 @@
 #include <fstream>  
 #include "core.h"
 #include "GotoXY.h"
-#define SHIP_COUNT 10
 
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
-bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false;
+bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false;
 int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips; //точка первого попадания по кораблю если он больше
-const int maxamountOfShips = 5;
+const int maxamountOfShips = 10;
 const char drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' ';
 class ship {
 public:
-    int length = {0};
+    int length = { 0 };
     int hp;
     int x[4], y[4];
 };
-ship sh[SHIP_COUNT];
+ship sh[maxamountOfShips * 2];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
-
+void humanPlayer()
+{
+    player = true;
+    showField(fieldBot);
+    char x;
+    int y, x1;
+    while (true)
+    {
+        std::cin >> x >> y;
+        x1 = x - '@';
+        if (x1 > 10)
+            x1 = x1 - 32;
+        if (fieldBot[y][x1] == aliveSh)
+        {
+            fieldBot[y][x1] = drownSh;
+            hitShip(x1, y, fieldBot);
+            showField(fieldBot);
+        }
+        else
+        {
+            fieldBot[y][x1] = missed;
+            showField(fieldBot);
+            break;
+        }
+    }
+}
 void fieldBoarder(char field[sz][szx]) {
     for (int i = 0; i < sz; i++)
     {
@@ -40,28 +64,28 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
     {
         if (field[i][k] == boarder)
             setColor(LightBlue, LightBlue);
-        else if (field[i][k] == ocean)
-            SetConsoleTextAttribute(hConsole, 240);
+        else if (field[i][k] == ocean || field[i][k] == aliveSh && player)
+            setColor(White, White);
         else if (field[i][k] == aliveSh)
             setColor(LightGreen, LightGreen);
         else if (field[i][k] == drownSh)
             setColor(Red, Red);
         else
             SetConsoleTextAttribute(hConsole, 240);
-        if (ifboarder|| field[i][k] != boarder)
+        if (ifboarder || field[i][k] != boarder)
             for (int m = 0; m < 6; m++)
                 std::cout << field[i][k];
-        else if(boarder&&field[i][k]==boarder)
-        {      
+        else if (boarder && field[i][k] == boarder)
+        {
             for (int m = 0; m < 6; m++)
             {
-                if (m == 3|| i / 10 > 0&&m==2)
+                if (m == 3 || i / 10 > 0 && m == 2)
                 {
                     setColor(White, LightBlue);
                     if (i != 0)
                         std::cout << i;
                     else if (k != 0)
-                        std::cout << (char)(letter+k);
+                        std::cout << (char)(letter + k);
                     else
                         std::cout << " ";
                     if (i / 10 > 0)
@@ -72,7 +96,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
                     setColor(LightBlue, LightBlue);
                     std::cout << field[i][k];
                 }
-                    
+
             }
         }
 
@@ -102,7 +126,7 @@ void showField(char field[sz][szx]) {
     FlushConsoleInputBuffer(hConsole);
     for (int i = 0; i < sz - 1; i++)
     {
-        horOutput(i, true,field);
+        horOutput(i, true, field);
         SetConsoleTextAttribute(hConsole, 15);
         std::cout << std::endl;
         horOutput(i, false, field);//if false - std::cout grid number
@@ -116,17 +140,20 @@ void showField(char field[sz][szx]) {
     }
 }
 void shipDrown(int shipNum, char field[sz][szx]) { //функция затопления корабля
-    d1 = 1;
-    d2 = 1;
-    d3 = 1;
-    d4 = 1;
-    xOld = 0;
-    yOld = 0;
-    dx1 = 1;
-    dx2 = 1;
-    dx3 = 1;
-    dx4 = 1;
-    shOnfire = false;
+    if (!player)
+    {
+        d1 = 1;
+        d2 = 1;
+        d3 = 1;
+        d4 = 1;
+        xOld = 0;
+        yOld = 0;
+        dx1 = 1;
+        dx2 = 1;
+        dx3 = 1;
+        dx4 = 1;
+        shOnfire = false;
+    }
     for (int i = 0; i < sh[shipNum].length; i++)
     {
         for (int m = -1; m <= 1; m++)
@@ -142,23 +169,42 @@ void shipDrown(int shipNum, char field[sz][szx]) { //функция затопл
     }
 }
 void hitShip(int x, int y, char field[sz][szx]) { //функция снятия хп у корабля при попадании
-    for (int k = 0; k < maxamountOfShips; k++)
-    {
-        for (int i = 0; i < sh[k].length; i++)
+    if (!player)
+        for (int k = 0; k < maxamountOfShips; k++)
         {
-            if (sh[k].x[i] == x && sh[k].y[i] == y)
+            for (int i = 0; i < sh[k].length; i++)
             {
-
-                sh[k].hp--;
-                //std::cout<<"Current ship hp "<<sh[k].hp<<std::endl;
-                if (sh[k].hp == 0)
+                if (sh[k].x[i] == x && sh[k].y[i] == y)
                 {
-                    //   std::cout<<"game over"<<std::endl;
-                    shipDrown(k,field);
+
+                    sh[k].hp--;
+                    //std::cout<<"Current ship hp "<<sh[k].hp<<std::endl;
+                    if (sh[k].hp == 0)
+                    {
+                        //   std::cout<<"game over"<<std::endl;
+                        shipDrown(k, field);
+                    }
                 }
             }
         }
-    }
+    else
+        for (int k = maxamountOfShips; k < maxamountOfShips * 2; k++)
+        {
+            for (int i = 0; i < sh[k].length; i++)
+            {
+                if (sh[k].x[i] == x && sh[k].y[i] == y)
+                {
+
+                    sh[k].hp--;
+                    //std::cout<<"Current ship hp "<<sh[k].hp<<std::endl;
+                    if (sh[k].hp == 0)
+                    {
+                        //   std::cout<<"game over"<<std::endl;
+                        shipDrown(k, field);
+                    }
+                }
+            }
+        }
 }
 void shipOnfire(char field[sz][szx]) {//функция ии для продолжения боя по найденому кораблю
     int x = xOld, y = yOld;
@@ -231,7 +277,7 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
                 d1 = false;
                 d3 = false;
             }
-            hitShip(x, y,field);
+            hitShip(x, y, field);
         }
         showField(field);
         Sleep(3000);
@@ -239,39 +285,38 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 }
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
-    while (true) {
-        int x, y;
-        if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
+    player = false;
+    int x, y;
+    if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
+    {
+        shipOnfire(field);
+    }
+    else
+    {
+        srand(time(NULL));
+        while (true) //первый рандомный выстрел
         {
-            shipOnfire(field);
+            x = rand() % (sz - 1) + 1;
+            y = rand() % (sz - 1) + 1;
+            if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
+                break;
         }
-        else
+        if (field[y][x] == aliveSh) //если попал
         {
-            srand(time(NULL));
-            while (true) //первый рандомный выстрел
-            {
-                x = rand() % (sz - 1) + 1;
-                y = rand() % (sz - 1) + 1;
-                if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
-                    break;
-            }
-            if (field[y][x] == aliveSh) //если попал
-            {
-                hitShip(x, y, field);
-                field[y][x] = drownSh;
-                xOld = x;
-                yOld = y;
-                shOnfire = true;
-                showField(field);
-                Sleep(300);
-                shipOnfire(field);
-
-            }
-            else //если не попал первым выстрелом
-                field[y][x] = missed;
+            hitShip(x, y, field);
+            field[y][x] = drownSh;
+            xOld = x;
+            yOld = y;
+            shOnfire = true;
             showField(field);
             Sleep(300);
+            shipOnfire(field);
+
         }
+        else //если не попал первым выстрелом
+            field[y][x] = missed;
+        showField(field);
+        Sleep(300);
     }
 }
 void shipConstructor(char field[sz][szx]) {
@@ -335,19 +380,24 @@ void shipConstructor(char field[sz][szx]) {
     }
     cleaning();
     showField(fieldPlayer);
-  /*GotoXY(width / 2 + 20, height / 2 - 5);
-    std::cout << "Сохранить расстановку? y" << R"(\n: )" << "                     ";
-    GotoXY(width / 2 + 48, height / 2 - 5);
-    std::cin >> choice;
-    switch (choice) {
-    case'y':
-        saveInFile();
-        loadFromFile();
-        showField(fieldPlayer);
-        break;
+    /*GotoXY(width / 2 + 20, height / 2 - 5);
+      std::cout << "Сохранить расстановку? y" << R"(\n: )" << "                     ";
+      GotoXY(width / 2 + 48, height / 2 - 5);
+      std::cin >> choice;
+      switch (choice) {
+      case'y':
+          saveInFile();
+          loadFromFile();
+          showField(fieldPlayer);
+          break;
+      }
+      system("pause");*/
+    while (true) {
+        aiPlayer(fieldPlayer);
+        system("pause");
+        humanPlayer();
+        system("pause");
     }
-    system("pause");*/
-    aiPlayer(fieldPlayer);
 }
 /*void saveInFile() { //сохранениие поля игрока в файл
     std::ofstream fout("out.txt", std::ios::out);
@@ -392,15 +442,43 @@ void AI()
     */
     fieldBoarder(fieldPlayer);
     fieldBoarder(fieldBot);
+
+    fieldBot[5][5] = aliveSh;
+    fieldBot[5][4] = aliveSh;
+    fieldBot[5][3] = aliveSh;
+    sh[10].length = 3;
+    sh[10].hp = 3;
+    sh[10].x[0] = 5;
+    sh[10].y[0] = 5;
+    sh[10].x[1] = 4;
+    sh[10].y[1] = 5;
+    sh[10].x[2] = 3;
+    sh[10].y[2] = 5;
+
+    fieldBot[2][5] = aliveSh;
+    fieldBot[2][4] = aliveSh;
+    fieldBot[2][3] = aliveSh;
+    fieldBot[2][2] = aliveSh;
+    sh[11].length = 4;
+    sh[11].hp = 4;
+    sh[11].x[0] = 2;
+    sh[11].y[0] = 2;
+    sh[11].x[1] = 3;
+    sh[11].y[1] = 2;
+    sh[11].x[2] = 4;
+    sh[11].y[2] = 2;
+    sh[11].x[3] = 5;
+    sh[11].y[3] = 2;
+
+
     std::string mode;
     for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
-        GotoXY(width / 2-20, height - 20);
+        GotoXY(width / 2 - 20, height - 20);
         draw_progress_bar(i);
         Sleep(3);
     }
     GotoXY(width / 2 - 10, height - 18);
-        system("pause");
-        shipConstructor(fieldPlayer);
-    
+    system("pause");
+    shipConstructor(fieldPlayer);
+
 }
-        
