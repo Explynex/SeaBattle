@@ -14,19 +14,45 @@ const char drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' 
 class ship {
 public:
     int length = { 0 };
-    int hp;
+    int hp=0;
     int x[4], y[4];
 };
 ship sh[maxamountOfShips * 2];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
+
 void humanPlayer()
 {
     player = true;
     showField(fieldBot);
+    GotoXY(width / 2 + 19, height / 2 - 23);
+    std::cout << "                    ██ ██ ████  ███                  ";
+    GotoXY(width / 2 + 19, height / 2 - 22);
+    std::cout << "                     ███  █  █  █ █                  ";
+    GotoXY(width / 2 + 19, height / 2 - 21);
+    std::cout << "                      █   █  █  █ █                  ";
+    GotoXY(width / 2 + 19, height / 2 - 20);
+    std::cout << "                     ███  █  █ █████                 ";
+    GotoXY(width / 2 + 19, height / 2 - 19);
+    std::cout << "                    ██ ██ ████ █   █                 ";
+    GotoXY(width / 2 + 24, height / 2 - 17);
+    std::cout << "                                                     ";
+    GotoXY(width / 2 + 24, height / 2 - 16);
+    std::cout << "         █  █ ███ ████ ████ █  █ ████                         ";
+    GotoXY(width / 2 + 24, height / 2 - 15);
+    std::cout << "         █  █ █   █  █ █  █ █ █  █  █                    ";
+    GotoXY(width / 2 + 24, height / 2 - 14);
+    std::cout << "         █ ██ █   ████ █  █ ██   ████                    ";
+    GotoXY(width / 2 + 24, height / 2 - 13);
+    std::cout << "         ██ █ █   █    █  █ █ █  █  █                         ";
+    GotoXY(width / 2 + 24, height / 2 - 12);
+    std::cout << "         █  █ █   █    ████ █  █ █  █                    ";
     char x;
     int y, x1;
     while (true)
     {
+        GotoXY(width / 2 + 20, height / 2 - 5);
+        std::cout << "Координаты выстрела:                      ";
+        GotoXY(width / 2 + 41, height / 2 - 5);
         std::cin >> x >> y;
         x1 = x - '@';
         if (x1 > 10)
@@ -39,6 +65,8 @@ void humanPlayer()
         }
         else
         {
+            GotoXY(width / 2 + 20, height / 2 - 4);
+            std::cout << "Промах!";
             fieldBot[y][x1] = missed;
             showField(fieldBot);
             break;
@@ -285,7 +313,30 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 }
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
+    GotoXY(width / 2 + 19, height / 2 - 23);
+    std::cout << "                    ██ ██ ████  ███                  ";
+    GotoXY(width / 2 + 19, height / 2 - 22);
+    std::cout << "                     ███  █  █  █ █                  ";
+    GotoXY(width / 2 + 19, height / 2 - 21);
+    std::cout << "                      █   █  █  █ █                  ";
+    GotoXY(width / 2 + 19, height / 2 - 20);
+    std::cout << "                     ███  █  █ █████                 ";
+    GotoXY(width / 2 + 19, height / 2 - 19);
+    std::cout << "                    ██ ██ ████ █   █                 ";
+    GotoXY(width / 2 + 24, height / 2 - 17);
+    std::cout << "                                                     ";
+    GotoXY(width / 2 + 24, height / 2 - 16);
+    std::cout << "█  █ ████ █   █ ████ █    █  ██  ███ ███ ████ ████     ";
+    GotoXY(width / 2 + 24, height / 2 - 15);
+    std::cout << "█ █  █  █ ██ ██ █  █ █    █ █  █  █  █   █  █ █  █     ";
+    GotoXY(width / 2 + 24, height / 2 - 14);
+    std::cout << "██   █  █ █ █ █ █  █ ████ ████ █  █  ███ ████ ████     ";
+    GotoXY(width / 2 + 24, height / 2 - 13);
+    std::cout << "█ █  █  █ █   █ █  █ █  █ █ █  █  █  █   █    █  █     ";
+    GotoXY(width / 2 + 24, height / 2 - 12);
+    std::cout << "█  █ ████ █   █ █  █ ████ █  ██   █  ███ █    █  █     ";
     player = false;
+    showField(field);
     int x, y;
     if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
     {
@@ -296,6 +347,10 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         srand(time(NULL));
         while (true) //первый рандомный выстрел
         {
+            GotoXY(width / 2 + 20, height / 2 - 5);
+            std::cout << "Ожидание хода компьютера...       ";
+            cleaning();
+            Sleep(1000);
             x = rand() % (sz - 1) + 1;
             y = rand() % (sz - 1) + 1;
             if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
@@ -309,19 +364,20 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
             yOld = y;
             shOnfire = true;
             showField(field);
-            Sleep(300);
+            Sleep(1000);
             shipOnfire(field);
 
         }
         else //если не попал первым выстрелом
             field[y][x] = missed;
+        Sleep(1000);
         showField(field);
-        Sleep(300);
     }
 }
 void shipConstructor(char field[sz][szx]) {
     char choice;
-    for (int counter = 0; counter < 2; counter++) {
+    int length, counter1 = 0, counter2 = 0, counter3 = 0, counter4 = 0;
+    for (int counter = 0; counter < 10; counter++) {
         system("cls");
         showField(fieldPlayer);
         GotoXY(width / 2 + 20, height / 2 - 23);
@@ -346,34 +402,100 @@ void shipConstructor(char field[sz][szx]) {
         std::cout << "█ █  █  █ █    █  █ █  █ █  █ █   ██ █";
         GotoXY(width / 2 + 25, height / 2 - 12);
         std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
-        int length;
         char x;
         cleaning();
         currAmofShips++;
-        do {
-            GotoXY(width / 2 + 20, height / 2 - 5);
-            std::cout << "Введите размерность корабля:                      ";
-            GotoXY(width / 2 + 49, height / 2 - 5);
-            std::cin >> length;
-            if (length > 4) {
-                GotoXY(width / 2 + 20, height / 2 - 4);
-                std::cout << "Максимальный размер корабля - 4 клетки!";
-                std::cin.ignore();
-                std::cin.get();
-                GotoXY(width / 2 + 20, height / 2 - 4);
-                std::cout << "                                         ";
-            }
-        } while (length > 4);
+            do {
+             m: setColor(White, Black);
+                GotoXY(width / 2 + 20, height / 2 - 5);
+                std::cout << "Введите размерность корабля:                      ";
+                GotoXY(width / 2 + 49, height / 2 - 5);
+                std::cin >> length;
+                if (length > 4) {
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Максимальный размер корабля - 4 клетки!";
+                    Sleep(1000);
+                    cleaning();
+                }
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(32767, '\n');
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Ошибка! Некорректные данные.\n";
+                    Sleep(1000);
+                    cleaning();
+                }
+                if (length==1 && counter1 > 3) { //проверка количества корабликов размерности 1
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Ошибка! Максимальное количество корабликов размерностью 1 - 4 шт.\n";
+                    Sleep(1500);
+                    cleaning();
+                    goto m; //если проверка не прошла возвращаемся в начало
+                }
+                else if (length == 1) {//если проверка прошла то ++ к счетчику корабликов 1
+                    counter1++;
+                }
+                if (length == 2 && counter2 > 2) { //проверка количества корабликов размерности 2
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Ошибка! Максимальное количество корабликов размерностью 2 - 3 шт.\n";
+                    Sleep(1500);
+                    cleaning();
+                    goto m; //если проверка не прошла возвращаемся в начало
+                }
+                else if (length == 2) {//если проверка прошла то ++ к счетчику корабликов 2
+                    counter2++;
+                }
+                if (length == 3 && counter3 > 1) { //проверка количества корабликов размерности 3
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Ошибка! Максимальное количество корабликов размерностью 3 - 2 шт.\n";
+                    Sleep(1500);
+                    cleaning();
+                    goto m; //если проверка не прошла возвращаемся в начало
+                }
+                else if (length == 3) {//если проверка прошла то ++ к счетчику корабликов 3
+                    counter3++;
+                }
+                if (length == 4 && counter4 > 0) { //проверка количества корабликов размерности 3
+                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    setColor(LightRed, Black);
+                    std::cout << "Ошибка! Максимальное количество корабликов размерностью 4 - 1 шт.\n";
+                    Sleep(1500);
+                    cleaning();
+                    goto m; //если проверка не прошла возвращаемся в начало
+                }
+                else if (length == 4) {//если проверка прошла то ++ к счетчику корабликов 3
+                    counter4++;
+                }
+            } while (length > 4 || length != 1 && length != 2 && length != 3 && length != 4);
         for (int i = 0; i < length; i++)
         {
-            GotoXY(width / 2 + 20, height / 2 - 4 + i);
-            std::cout << "Enter x" << i << " and y" << i << " : ";
-            std::cin >> x >> sh[currAmofShips - 1].y[i];
-            if (x >= 65 && x <= 74)
-                sh[currAmofShips - 1].x[i] = x - 64;
-            else if (x >= 97 && x <= 106)
-                sh[currAmofShips - 1].x[i] = x - 96;
-            field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
+             n: setColor(White, Black);
+                GotoXY(width / 2 + 20, height / 2 - 4 + i);
+                std::cout << "Enter x" << i << " and y" << i << " :            ";
+                GotoXY(width / 2 + 38, height / 2 - 4 + i);
+                std::cin >> x >> sh[currAmofShips - 1].y[i];
+                    if (x >= 65 && x <= 74)
+                        sh[currAmofShips - 1].x[i] = x - 64;
+                    else if (x >= 97 && x <= 106)
+                        sh[currAmofShips - 1].x[i] = x - 96;
+                    if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] == ocean) {
+                        field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
+                    }
+                    else if( field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail()) { // проверка правильности ввода 
+                        std::cin.clear();
+                        std::cin.ignore(32767, '\n');
+                        GotoXY(width / 2 + 20, height / 2 - 4);
+                        setColor(LightRed, Black);
+                        std::cout << "Ошибка! Некорректные данные.\n";
+                        Sleep(1000);
+                        cleaning();
+                        goto n;
+                    }
         }
         sh[currAmofShips - 1].length = length;
         sh[currAmofShips - 1].hp = length;
@@ -394,9 +516,9 @@ void shipConstructor(char field[sz][szx]) {
       system("pause");*/
     while (true) {
         aiPlayer(fieldPlayer);
-        system("pause");
+        Sleep(1500);
         humanPlayer();
-        system("pause");
+        Sleep(1500);
     }
 }
 /*void saveInFile() { //сохранениие поля игрока в файл
@@ -424,13 +546,13 @@ void loadFromFile() { //загрузка
 }*/
 void cleaning() {
     GotoXY(width / 2 + 20, height / 2 - 4);
-    std::cout << "                                ";  //очистка ввода
+    std::cout << "                                                                   ";  //очистка ввода
     GotoXY(width / 2 + 20, height / 2 - 3);
-    std::cout << "                                ";
+    std::cout << "                                            ";
     GotoXY(width / 2 + 20, height / 2 - 2);
-    std::cout << "                                ";
+    std::cout << "                                            ";
     GotoXY(width / 2 + 20, height / 2 - 1);
-    std::cout << "                                ";
+    std::cout << "                                            ";
 }
 void AI()
 {
