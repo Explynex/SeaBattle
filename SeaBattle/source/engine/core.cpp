@@ -146,25 +146,33 @@ void kletochki(int i)
         std::cout << std::endl;
 }
 void showField(char field[sz][szx]) {
+    int m=0;
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    Pos.X = 0;
-    Pos.Y = 0;
-    SetConsoleCursorPosition(hOut, Pos);
+    //Pos.X = (width-150)/2;
+    //Pos.Y = (height - 45) / 2;
+    //SetConsoleCursorPosition(hOut, Pos);
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     FlushConsoleInputBuffer(hConsole);
     for (int i = 0; i < sz - 1; i++)
     {
+        GotoXY((width-142)/2,(height - 43) / 2+m++);
         horOutput(i, true, field);
         SetConsoleTextAttribute(hConsole, 15);
-        std::cout << std::endl;
+      //  std::cout << std::endl;
+        GotoXY((width - 142) / 2, (height - 43) / 2 + m++);
         horOutput(i, false, field);//if false - std::cout grid number
         SetConsoleTextAttribute(hConsole, 15);
-        std::cout << std::endl;
+      //  std::cout << std::endl;
+        GotoXY((width - 142) / 2, (height - 43) / 2 + m++);
         horOutput(i, true, field);
         SetConsoleTextAttribute(hConsole, 15);
-        std::cout << std::endl;
+      //  std::cout << std::endl;
         if (i != sz - 1 && i != 0)
+        {
+            GotoXY((width - 142) / 2, (height - 43) / 2 + m++);
             kletochki(i);
+        }
+            
     }
 }
 void shipDrown(int shipNum, char field[sz][szx]) { //функция затопления корабля
@@ -376,43 +384,45 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
 }
 void shipConstructor(char field[sz][szx]) {
     char choice;
-    int length, counter1 = 0, counter2 = 0, counter3 = 0, counter4 = 0;
+    int length, counter1 = 0, counter2 = 0, counter3 = 0, counter4 = 0,m;
     for (int counter = 0; counter < 10; counter++) {
         system("cls");
         showField(fieldPlayer);
-        GotoXY(width / 2 + 20, height / 2 - 23);
+        m = 0;
+        GotoXY((width-142)/2 + 94, (height-43)/2+m++);
         std::cout << "█  █ ████ █  █ ████ ███ ████ █ █ █  █ ███ ████ ████";
-        GotoXY(width / 2 + 20, height / 2 - 22);
+        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + m++);
         std::cout << "█ █  █  █ █  █ █  █  █  █  █ █ █ █ █   █  █  █ █  █";
-        GotoXY(width / 2 + 20, height / 2 - 21);
+        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + m++);
         std::cout << "██   █  █ ████ █     █  ████ ███ ██    █  █  █ ████";
-        GotoXY(width / 2 + 20, height / 2 - 20);
+        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + m++);
         std::cout << "█ █  █  █ █  █ █  █  █  █      █ █ █   █  █  █ █";
-        GotoXY(width / 2 + 20, height / 2 - 19);
+        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + m++);
         std::cout << "█  █ ████ █  █ ████  █  █    ███ █  █  █  ████ █";
-        GotoXY(width / 2 + 25, height / 2 - 17);
-        std::cout << "	   		           ▀▀";
-        GotoXY(width / 2 + 25, height / 2 - 16);
+        m++;
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
+        std::cout << "	   		               ▀▀";
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "█  █ ████ ████ ████ ████   ██ ███ █  █";
-        GotoXY(width / 2 + 25, height / 2 - 15);
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "█ █  █  █ █  █ █  █ █     █ █ █   █  █";
-        GotoXY(width / 2 + 25, height / 2 - 14);
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "██   █  █ ████ ████ ████ █  █ ███ █ ██";
-        GotoXY(width / 2 + 25, height / 2 - 13);
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "█ █  █  █ █    █  █ █  █ █  █ █   ██ █";
-        GotoXY(width / 2 + 25, height / 2 - 12);
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
         char x;
         cleaning();
         currAmofShips++;
             do {
              m: setColor(White, Black);
-                GotoXY(width / 2 + 20, height / 2 - 5);
-                std::cout << "Введите размерность корабля:                      ";
-                GotoXY(width / 2 + 49, height / 2 - 5);
+                GotoXY((width - 142) / 2 + 96, (height - 43) / 2+10+m);
+                std::cout << "   Введите размерность корабля:                      ";
+                GotoXY((width - 142) / 2 + 128, (height - 43) / 2 + 10 + m);
                 std::cin >> length;
                 if (length > 4) {
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Максимальный размер корабля - 4 клетки!";
                     Sleep(1000);
@@ -421,14 +431,14 @@ void shipConstructor(char field[sz][szx]) {
                 if (std::cin.fail()) {
                     std::cin.clear();
                     std::cin.ignore(32767, '\n');
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Ошибка! Некорректные данные.\n";
                     Sleep(1000);
                     cleaning();
                 }
                 if (length==1 && counter1 > 3) { //проверка количества корабликов размерности 1
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Ошибка! Максимальное количество корабликов размерностью 1 - 4 шт.\n";
                     Sleep(1500);
@@ -439,7 +449,7 @@ void shipConstructor(char field[sz][szx]) {
                     counter1++;
                 }
                 if (length == 2 && counter2 > 2) { //проверка количества корабликов размерности 2
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Ошибка! Максимальное количество корабликов размерностью 2 - 3 шт.\n";
                     Sleep(1500);
@@ -450,7 +460,7 @@ void shipConstructor(char field[sz][szx]) {
                     counter2++;
                 }
                 if (length == 3 && counter3 > 1) { //проверка количества корабликов размерности 3
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Ошибка! Максимальное количество корабликов размерностью 3 - 2 шт.\n";
                     Sleep(1500);
@@ -461,7 +471,7 @@ void shipConstructor(char field[sz][szx]) {
                     counter3++;
                 }
                 if (length == 4 && counter4 > 0) { //проверка количества корабликов размерности 3
-                    GotoXY(width / 2 + 20, height / 2 - 4);
+                    GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 10 + m);
                     setColor(LightRed, Black);
                     std::cout << "Ошибка! Максимальное количество корабликов размерностью 4 - 1 шт.\n";
                     Sleep(1500);
@@ -475,9 +485,9 @@ void shipConstructor(char field[sz][szx]) {
         for (int i = 0; i < length; i++)
         {
              n: setColor(White, Black);
-                GotoXY(width / 2 + 20, height / 2 - 4 + i);
+                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m + i);
                 std::cout << "Enter x" << i << " and y" << i << " :            ";
-                GotoXY(width / 2 + 38, height / 2 - 4 + i);
+                GotoXY((width - 142) / 2 + 117, (height - 43) / 2 + 10 + m + i);
                 std::cin >> x >> sh[currAmofShips - 1].y[i];
                     if (x >= 65 && x <= 74)
                         sh[currAmofShips - 1].x[i] = x - 64;
@@ -489,7 +499,7 @@ void shipConstructor(char field[sz][szx]) {
                     else if( field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail()) { // проверка правильности ввода 
                         std::cin.clear();
                         std::cin.ignore(32767, '\n');
-                        GotoXY(width / 2 + 20, height / 2 - 4);
+                        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m + i);
                         setColor(LightRed, Black);
                         std::cout << "Ошибка! Некорректные данные.\n";
                         Sleep(1000);
@@ -502,6 +512,7 @@ void shipConstructor(char field[sz][szx]) {
     }
     cleaning();
     showField(fieldPlayer);
+
     /*GotoXY(width / 2 + 20, height / 2 - 5);
       std::cout << "Сохранить расстановку? y" << R"(\n: )" << "                     ";
       GotoXY(width / 2 + 48, height / 2 - 5);
@@ -513,7 +524,8 @@ void shipConstructor(char field[sz][szx]) {
           showField(fieldPlayer);
           break;
       }
-      system("pause");*/
+      system("pause");
+      */
     while (true) {
         aiPlayer(fieldPlayer);
         Sleep(1500);
@@ -521,20 +533,22 @@ void shipConstructor(char field[sz][szx]) {
         Sleep(1500);
     }
 }
-/*void saveInFile() { //сохранениие поля игрока в файл
-    std::ofstream fout("out.txt", std::ios::out);
+void saveInFile() { //сохранениие поля игрока в файл
+    std::ofstream fout("out.bin", std::ios_base::binary);
     for (int i = 0; i < (sz); i++)
     {
         for (int j = 0; j < (szx); j++)
         {
             fout << fieldPlayer[i][j] << " ";
+            std::cout<< fieldPlayer[i][j] << " ";
         }
+        std::cout << std::endl;
     }
     std::cout << "Succes!";
-
+    system("pause");
 }
 void loadFromFile() { //загрузка
-    std::ifstream fin("out.txt", std::ios::out);
+    std::ifstream fin("out.bin", std::ios_base::binary);
     for (int i = 0; i < (sz); i++)
     {
         for (int j = 0; j < (szx); j++)
@@ -543,15 +557,15 @@ void loadFromFile() { //загрузка
         }
     }
     std::cout << "Succes!";
-}*/
+}
 void cleaning() {
-    GotoXY(width / 2 + 20, height / 2 - 4);
+    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22 );
     std::cout << "                                                                   ";  //очистка ввода
-    GotoXY(width / 2 + 20, height / 2 - 3);
+    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 23);
     std::cout << "                                            ";
-    GotoXY(width / 2 + 20, height / 2 - 2);
+    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 24);
     std::cout << "                                            ";
-    GotoXY(width / 2 + 20, height / 2 - 1);
+    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 25);
     std::cout << "                                            ";
 }
 void AI()
@@ -601,6 +615,15 @@ void AI()
     }
     GotoXY(width / 2 - 10, height - 18);
     system("pause");
+   /* loadFromFile();
+    showField(fieldPlayer);
+    Sleep(1500);
+    while (true) {
+        aiPlayer(fieldPlayer);
+        Sleep(1500);
+        humanPlayer();
+        Sleep(1500);
+    }*/
     shipConstructor(fieldPlayer);
 
 }
