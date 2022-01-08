@@ -22,37 +22,44 @@ char fieldPlayer[sz][szx], fieldBot[sz][szx];
 
 void humanPlayer()
 {
+    int m = 0;
     player = true;
     showField(fieldBot);
-    GotoXY(width / 2 + 19, height / 2 - 23);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                    ██ ██ ████  ███                  ";
-    GotoXY(width / 2 + 19, height / 2 - 22);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                     ███  █  █  █ █                  ";
-    GotoXY(width / 2 + 19, height / 2 - 21);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                      █   █  █  █ █                  ";
-    GotoXY(width / 2 + 19, height / 2 - 20);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                     ███  █  █ █████                 ";
-    GotoXY(width / 2 + 19, height / 2 - 19);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                    ██ ██ ████ █   █                 ";
-    GotoXY(width / 2 + 24, height / 2 - 17);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "                                                     ";
-    GotoXY(width / 2 + 24, height / 2 - 16);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "         █  █ ███ ████ ████ █  █ ████                         ";
-    GotoXY(width / 2 + 24, height / 2 - 15);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "         █  █ █   █  █ █  █ █ █  █  █                    ";
-    GotoXY(width / 2 + 24, height / 2 - 14);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "         █ ██ █   ████ █  █ ██   ████                    ";
-    GotoXY(width / 2 + 24, height / 2 - 13);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "         ██ █ █   █    █  █ █ █  █  █                         ";
-    GotoXY(width / 2 + 24, height / 2 - 12);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
+   // GotoXY(width / 2 + 24, height / 2 - 12);
     std::cout << "         █  █ █   █    ████ █  █ █  █                    ";
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
+    std::cout << "                                                         ";
     char x;
     int y, x1;
     while (true)
     {
-        GotoXY(width / 2 + 20, height / 2 - 5);
+
+        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m+6);
+        //GotoXY(width / 2 + 20, height / 2 - 5);
         std::cout << "Координаты выстрела:                      ";
-        GotoXY(width / 2 + 41, height / 2 - 5);
+        GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + m + 6);
+        //GotoXY(width / 2 + 41, height / 2 - 5);
         std::cin >> x >> y;
         x1 = x - '@';
         if (x1 > 10)
@@ -65,7 +72,7 @@ void humanPlayer()
         }
         else
         {
-            GotoXY(width / 2 + 20, height / 2 - 4);
+            GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + m + 6);
             std::cout << "Промах!";
             fieldBot[y][x1] = missed;
             showField(fieldBot);
@@ -247,6 +254,8 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
     //  std::cout<<"Ship on fire"<<std::endl;
     while (shOnfire)
     {
+        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 11 + 6);
+        std::cout << "Ожидание хода компьютера...       ";
         while (shOnfire) //генерация направления для нового выстрела
         {
             srand(time(NULL));
@@ -321,28 +330,32 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 }
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
-    GotoXY(width / 2 + 19, height / 2 - 23);
+    int m = 0;
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                    ██ ██ ████  ███                  ";
-    GotoXY(width / 2 + 19, height / 2 - 22);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                     ███  █  █  █ █                  ";
-    GotoXY(width / 2 + 19, height / 2 - 21);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                      █   █  █  █ █                  ";
-    GotoXY(width / 2 + 19, height / 2 - 20);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                     ███  █  █ █████                 ";
-    GotoXY(width / 2 + 19, height / 2 - 19);
+    GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + m++);
     std::cout << "                    ██ ██ ████ █   █                 ";
-    GotoXY(width / 2 + 24, height / 2 - 17);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "                                                     ";
-    GotoXY(width / 2 + 24, height / 2 - 16);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "█  █ ████ █   █ ████ █    █  ██  ███ ███ ████ ████     ";
-    GotoXY(width / 2 + 24, height / 2 - 15);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "█ █  █  █ ██ ██ █  █ █    █ █  █  █  █   █  █ █  █     ";
-    GotoXY(width / 2 + 24, height / 2 - 14);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "██   █  █ █ █ █ █  █ ████ ████ █  █  ███ ████ ████     ";
-    GotoXY(width / 2 + 24, height / 2 - 13);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "█ █  █  █ █   █ █  █ █  █ █ █  █  █  █   █    █  █     ";
-    GotoXY(width / 2 + 24, height / 2 - 12);
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
     std::cout << "█  █ ████ █   █ █  █ ████ █  ██   █  ███ █    █  █     ";
+    GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + m++);
+    std::cout << "                                                         ";
+
     player = false;
     showField(field);
     int x, y;
@@ -355,7 +368,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         srand(time(NULL));
         while (true) //первый рандомный выстрел
         {
-            GotoXY(width / 2 + 20, height / 2 - 5);
+            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m+6);
             std::cout << "Ожидание хода компьютера...       ";
             cleaning();
             Sleep(1000);
