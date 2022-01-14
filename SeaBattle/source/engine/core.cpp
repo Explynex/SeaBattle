@@ -7,8 +7,11 @@
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
+
+
+int width, height;
 bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false;
-int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips; //точка первого попадания по кораблю если он больше
+int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips=0; //точка первого попадания по кораблю если он больше
 const int maxamountOfShips = 10;
 const char drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' ';
 class ship {
@@ -254,8 +257,6 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
     //  std::cout<<"Ship on fire"<<std::endl;
     while (shOnfire)
     {
-        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 11 + 6);
-        std::cout << "Ожидание хода компьютера...       ";
         while (shOnfire) //генерация направления для нового выстрела
         {
             srand(time(NULL));
@@ -361,6 +362,8 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     int x, y;
     if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
     {
+        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m + 6);
+        std::cout << "Ожидание хода компьютера...       ";
         shipOnfire(field);
     }
     else
@@ -368,7 +371,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         srand(time(NULL));
         while (true) //первый рандомный выстрел
         {
-            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m+6);
+            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m +6);
             std::cout << "Ожидание хода компьютера...       ";
             cleaning();
             Sleep(1000);
@@ -525,51 +528,47 @@ void shipConstructor(char field[sz][szx]) {
     }
     cleaning();
     showField(fieldPlayer);
-
-    /*GotoXY(width / 2 + 20, height / 2 - 5);
+    GotoXY(width / 2 + 20, height / 2 - 5);
       std::cout << "Сохранить расстановку? y" << R"(\n: )" << "                     ";
       GotoXY(width / 2 + 48, height / 2 - 5);
       std::cin >> choice;
       switch (choice) {
       case'y':
           saveInFile();
-          loadFromFile();
-          showField(fieldPlayer);
           break;
       }
-      system("pause");
-      */
-    while (true) {
-        aiPlayer(fieldPlayer);
-        Sleep(1500);
-        humanPlayer();
-        Sleep(1500);
-    }
 }
 void saveInFile() { //сохранениие поля игрока в файл
-    std::ofstream fout("out.bin", std::ios_base::binary);
-    for (int i = 0; i < (sz); i++)
+    std::ofstream fout("out.txt");
+    char x;
+    for (int i = 0; i < maxamountOfShips; i++)
     {
-        for (int j = 0; j < (szx); j++)
+        fout << sh[i].length<<" ";
+        for (int j = 0; j < sh[i].length; j++)
         {
-            fout << fieldPlayer[i][j] << " ";
-            std::cout<< fieldPlayer[i][j] << " ";
+            x = sh[i].x[j] + 64;
+            fout << x << sh[i].y[j];
         }
-        std::cout << std::endl;
+        fout<<" ";
     }
-    std::cout << "Succes!";
     system("pause");
 }
 void loadFromFile() { //загрузка
-    std::ifstream fin("out.bin", std::ios_base::binary);
-    for (int i = 0; i < (sz); i++)
+    char x;
+    std::ifstream fin("out.txt");
+    for (int i = 0; i < maxamountOfShips; i++)
     {
-        for (int j = 0; j < (szx); j++)
+        fin >> sh[i].length;
+        for (int j = 0; j < sh[i].length; j++)
         {
-            fin >> fieldPlayer[i][j];
+            fin >>x>>sh[i].y[j];
+            if (x >= 65 && x <= 74)
+                sh[i].x[j] = x - 64;
+            else if (x >= 97 && x <= 106)
+                sh[i].x[j] = x - 96;
+            fieldPlayer[sh[i].y[j]][sh[i].x[j]] = aliveSh;
         }
     }
-    std::cout << "Succes!";
 }
 void cleaning() {
     GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22 );
@@ -581,8 +580,13 @@ void cleaning() {
     GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 25);
     std::cout << "                                            ";
 }
-void AI()
+void AI(std::string mode)
 {
+    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
+    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    height = scrBufferInfo.srWindow.Bottom - scrBufferInfo.srWindow.Top + 1;
+    width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left;
     /*HANDLE out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD crd = { 100, 100 };
     SMALL_RECT src = { 0, 0, crd.X - 1, crd.Y - 1 };
@@ -618,25 +622,24 @@ void AI()
     sh[11].y[2] = 2;
     sh[11].x[3] = 5;
     sh[11].y[3] = 2;
-
-
-    std::string mode;
     for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
-        GotoXY(width / 2 - 20, height - 20);
+        //GotoXY(width / 2 - 20, height - 20);
+        GotoXY((width - 54) / 2, (height - 7) / 2 + 8);
         draw_progress_bar(i);
         Sleep(3);
     }
-    GotoXY(width / 2 - 10, height - 18);
+    GotoXY((width - 32) / 2, (height - 7) / 2 + 10);
     system("pause");
-   /* loadFromFile();
+    if (mode == "constructor")
+        shipConstructor(fieldPlayer);
+    else if (mode == "fromfile")
+        loadFromFile();
+    system("cls");
     showField(fieldPlayer);
-    Sleep(1500);
     while (true) {
         aiPlayer(fieldPlayer);
         Sleep(1500);
         humanPlayer();
         Sleep(1500);
-    }*/
-    shipConstructor(fieldPlayer);
-
+    }
 }

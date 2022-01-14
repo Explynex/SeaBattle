@@ -4,5 +4,6 @@
 
 int main() {
 	SetWindow();
+	system("cls");
 	menu();
 }

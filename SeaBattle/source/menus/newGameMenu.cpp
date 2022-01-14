@@ -6,39 +6,45 @@
 
 
 int newGameMenu() {
+    HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
+    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    int height = scrBufferInfo.srWindow.Bottom - scrBufferInfo.srWindow.Top + 1;
+    int width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left+1 ;
 	std::string Menu[4] = { " Расставить вручную\n", " Загрузить расстановку\n", " Сгенерировать случайно\n", " Вернуться в главное меню\n"};
 	int point = 0;
     while (true)
     {
+        int m = 0;
         system("cls");
-        GotoXY(width /2 -11, height - 28);
+        GotoXY((width - 34)/2, (height - 7) / 2 + m++);
         std::cout << "Меню расстановки кораблей на поле\n";
-        GotoXY(width / 2 - 13, height - 27);
+        GotoXY((width - 38) / 2, (height - 7) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╔═══════════════════════════════════╗" << std::endl;
         for (int i = 0; i < 4; ++i)
         {
             if (i == point)
             {
-                GotoXY(width / 2 - 13, height - 26 + i);
+                GotoXY((width - 38) / 2, (height - 7) / 2 + m + i);
                 std::cout << "║";
-                GotoXY(width / 2 + 23, height - 26 + i);
+                GotoXY((width - 38) / 2+36, (height - 7) / 2 + m + i);
                 std::cout << "║";
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-                GotoXY(width / 2 - 12, height - 26 + i);
+                GotoXY((width - 38) / 2+1, (height - 7) / 2 + m + i);
                 std::cout << " >> " << Menu[i];
-                GotoXY(width / 2 - 51, height - 26 + i);
+                GotoXY(width / 2 - 51, (height - 7) / 2 + m + i);
             }
             else
             {
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-                GotoXY(width / 2 - 13, height - 26 + i);
+                GotoXY((width - 38) / 2, (height - 7) / 2 + m + i);
                 std::cout << "║" << Menu[i];
-                GotoXY(width / 2 + 23, height - 26 + i);
+                GotoXY((width - 38) / 2+36, (height - 7) / 2 + m + i);
                 std::cout << "║";
             }
         }
-        GotoXY(width / 2 - 13, height - 22);
+        GotoXY((width - 38) / 2, (height - 7) / 2 + m + 4);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╚═══════════════════════════════════╝" << std::endl;
 
@@ -65,12 +71,12 @@ int newGameMenu() {
             else if (GetAsyncKeyState(VK_RETURN) != 0) {
                 switch (point) {
                 case 0: {
-                    AI();
+                    AI("constructor");
                     return 0;
                 }
                 case 1: {
-                    std::cout << "\nComing soon..." << std::endl;
-                    break;
+                    AI("fromfile");
+                    return 0;
                 }
                 case 2: {
                     std::cout << "\nComing soon..." << std::endl;

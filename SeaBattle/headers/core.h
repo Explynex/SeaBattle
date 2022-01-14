@@ -3,7 +3,7 @@
 #define _CORE_H_
 const int sz = 12, szx = 12;
 
-void AI();
+void AI(std::string mode);
 void cleaning();
 void aiPlayer(char field[sz][szx]);
 void fieldBoarder(char field[sz][szx]);

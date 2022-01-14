@@ -4,40 +4,46 @@
 #include "GotoXY.h"
 
 int menu() {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
+    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    int height = scrBufferInfo.srWindow.Bottom - scrBufferInfo.srWindow.Top + 1;
+    int width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left + 1;
     std::string Menu[3] = { " Создать новую игру\n", " Как играть\n", " Выйти\n" };
     int pointer = 0;
 
     while (true)
     {
+        int m = 0;
         system("cls");
-        GotoXY(width/2-1, height - 28);
+        GotoXY((width - 37) / 2+13, (height-6)/2+m++);
         std::cout << "Морской бой\n";
-        GotoXY(width/2-13, height - 27);
+        GotoXY((width - 37) / 2, (height - 6) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╔═══════════════════════════════════╗" << std::endl;
         for (int i = 0; i < 3; ++i)
         {
             if (i == pointer)
             {
-                GotoXY(width/2-13, height-26+i);
+                GotoXY((width-37)/2, (height - 6) / 2 + m+i);
                 std::cout << "║";
-                GotoXY(width/2+23, height - 26 + i);
+                GotoXY(width/ 2+17, (height - 6) / 2 + m + i);
                 std::cout << "║";
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-                GotoXY(width/2-12, height - 26 + i);
+                GotoXY((width - 37) / 2+2, (height - 6) / 2 + m + i);
                 std::cout << " >> " << Menu[i];
-                GotoXY(width/2-51, height - 26 + i);
+                GotoXY(width/2-51, (height - 6) / 2 + m + i);
             }
             else
             {
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-                GotoXY(width/2-13, height - 26 + i);
+                GotoXY((width - 37) / 2, (height - 6) / 2 + m + i);
                 std::cout << "║" << Menu[i];
-                GotoXY(width/2+23, height - 26 + i);
+                GotoXY(width / 2 + 17, (height - 6) / 2 + m + i);
                 std::cout << "║";
             }
         }
-        GotoXY(width/2-13, height - 23);
+        GotoXY((width - 37) / 2, (height - 6) / 2 + m + 3);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╚═══════════════════════════════════╝" << std::endl;
 
