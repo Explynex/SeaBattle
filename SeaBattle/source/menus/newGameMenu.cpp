@@ -79,8 +79,8 @@ int newGameMenu() {
                     return 0;
                 }
                 case 2: {
-                    std::cout << "\nComing soon..." << std::endl;
-                    break;
+                    AI("random");
+                    return 0;
                 }
                 case 3: {
                     return 0;
