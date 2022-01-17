@@ -16,4 +16,5 @@ void shipOnfire(char field[sz][szx]);
 void showField(char field[sz][szx]);
 void saveInFile();
 void loadFromFile();
+std::string createFolders();
 #endif // !_CORE_H_
