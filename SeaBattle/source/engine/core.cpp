@@ -5,13 +5,19 @@
 #include "GotoXY.h"
 #include <Lmcons.h>
 #include <filesystem>
-#include <ShlObj.h>
 #include "newGameMenu.h"
+#include <thread>
+#include <future>
+#include <mutex>
+
 
 HANDLE hConsole;
 HANDLE hOut;
 COORD Pos;
 
+bool ExitFlag = false;
+int  someVariable = 0;
+std::mutex threadMutex;
 
 int width, height;
 bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false;
@@ -892,6 +898,40 @@ void randomgen(std::string whose)
     else
         randFieldIntegratorBot();
 }
+void progress(int sleeptime) {
+    for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
+   //GotoXY(width / 2 - 20, height - 20);
+        GotoXY((width - 54) / 2, (height - 7) / 2 + 8);
+        draw_progress_bar(i);
+        Sleep(sleeptime);
+    }
+    GotoXY((width - 32) / 2, (height - 7) / 2 + 10);
+    system("pause");
+}
+void animation() {
+    while (true) {
+        Sleep(80);
+        GotoXY((width - 16) / 2, (height - 7) / 2 + 8);
+        std::cout << "Генерация поля /";
+        Sleep(80);
+        GotoXY((width - 16) / 2, (height - 7) / 2 + 8);
+        std::cout << "Генерация поля \\";
+        Sleep(80);
+        GotoXY((width - 16) / 2, (height - 7) / 2 + 8);
+        std::cout << "Генерация поля —";
+        bool needExit = false;
+        threadMutex.lock();
+        needExit = ExitFlag;
+        threadMutex.unlock();
+        if (needExit) {
+            setColor(LightGreen, Black);
+            GotoXY((width - 20) / 2, (height - 7) / 2 + 8);
+            std::cout << "Успешно сгенерировано.";
+            setColor(White, Black);
+            break;
+        }
+    }
+}
 void AI(std::string mode)
 {
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -926,22 +966,28 @@ void AI(std::string mode)
     sh[11].y[2] = 2;
     sh[11].x[3] = 5;
     sh[11].y[3] = 2;*/
-    randomgen("bot");
-    for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
-       //GotoXY(width / 2 - 20, height - 20);
-        GotoXY((width - 54) / 2, (height - 7) / 2 + 8);
-        draw_progress_bar(i);
-        Sleep(3);
-    }
-    GotoXY((width - 32) / 2, (height - 7) / 2 + 10);
-    system("pause");
-    if (mode == "constructor")
+    if (mode == "constructor") {
+        std::thread th(randomgen, "bot");
+        progress(3);
         shipConstructor(fieldPlayer);
-    else if (mode == "fromfile")
+        th.join();
+    }
+    if (mode == "fromfile") {
+        std::thread th(randomgen, "bot");
+        progress(3);
         loadFromFile();
-    else if (mode == "random")
+        th.join();
+    }
+    if (mode == "random")
     {
+        auto f = std::async(std::launch::async, animation);
         randomgen("player");
+        randomgen("bot"); 
+        threadMutex.lock();
+        ExitFlag = true;
+        threadMutex.unlock();
+        GotoXY((width - 30) / 2, (height - 7) / 2 + 10);
+        system("pause");
         system("cls");
         showField(fieldPlayer);
         char choice;

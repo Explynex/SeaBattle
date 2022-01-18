@@ -3,7 +3,23 @@
 #include "newGameMenu.h"
 #include "GotoXY.h"
 
+BOOL ShowConsoleCursor(BOOL bShow)
+{
+    CONSOLE_CURSOR_INFO cci;
+    HANDLE hStdOut;
+    hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hStdOut == INVALID_HANDLE_VALUE)
+        return FALSE;
+    if (!GetConsoleCursorInfo(hStdOut, &cci))
+        return FALSE;
+    cci.bVisible = bShow;
+    if (!SetConsoleCursorInfo(hStdOut, &cci))
+        return FALSE;
+    return TRUE;
+}
+
 int menu() {
+    ShowConsoleCursor(FALSE);
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);

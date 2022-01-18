@@ -17,4 +17,5 @@ void showField(char field[sz][szx]);
 void saveInFile();
 void loadFromFile();
 std::string createFolders();
+void progress(int sleeptime);
 #endif // !_CORE_H_
