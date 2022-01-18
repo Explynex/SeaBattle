@@ -383,7 +383,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     }
     else
     {
-        m:srand(time(NULL));
+        srand(time(NULL));
         while (true) //первый рандомный выстрел
         {
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m +6);
@@ -405,11 +405,6 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
             showField(field);
             Sleep(1000);
             shipOnfire(field);
-            if (!shOnfire)
-            {
-                goto m;
-            }
-
         }
         else //если не попал первым выстрелом
             field[y][x] = missed;
@@ -792,6 +787,7 @@ void shiparound(int shipNum)
 }
 void generator(int shipNum)
 {
+    srand(time(NULL));
     int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld;
     bool d1 = true, d2 = true, d3 = true, d4 = true;
     for (int i = 0; i < shgen[shipNum].length; i++)
