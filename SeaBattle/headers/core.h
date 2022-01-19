@@ -4,7 +4,7 @@
 const int sz = 12, szx = 12;
 
 void AI(std::string mode);
-void cleaning();
+void cleaning(int iterCount);
 void aiPlayer(char field[sz][szx]);
 void fieldBoarder(char field[sz][szx]);
 void hitShip(int x, int y, char field[sz][szx]);
@@ -18,4 +18,5 @@ void saveInFile();
 void loadFromFile();
 std::string createFolders();
 void progress(int sleeptime);
+void shipCountAnim(std::string str, int posY, int shipCounter);
 #endif // !_CORE_H_

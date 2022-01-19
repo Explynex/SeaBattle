@@ -389,7 +389,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         {
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m +6);
             std::cout << "Ожидание хода компьютера...       ";
-            cleaning();
+            cleaning(8);
             Sleep(1000);
             x = rand() % (sz - 1) + 1;
             y = rand() % (sz - 1) + 1;
@@ -414,9 +414,10 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     }
 }
 void shipConstructor(char field[sz][szx]) {
-    char choice;
-    int length,counter1 = 0, counter2 = 0, counter3 = 0, counter4 = 0,m;
-    for (int counter = 0; counter < 2; counter++) {
+    char choice, buffer[8]{};
+    char* ptr = buffer;
+    int length=0,counter1 = 4, counter2 = 3, counter3 = 2, counter4 = 1,m;
+    for (int counter = 0; counter < 10; counter++) {
         system("cls");
         showField(fieldPlayer);
         m = 0;
@@ -443,65 +444,65 @@ void shipConstructor(char field[sz][szx]) {
         std::cout << "█ █  █  █ █    █  █ █  █ █  █ █   ██ █";
         GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + m++);
         std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
+        GotoXY(width / 2 + 28, height / 2 +15);
+        std::cout << "Доступные корабли:";
+        GotoXY(width / 2 + 47, height / 2 + 15);
+        std::cout << "Однопалубных: " << counter1;
+        GotoXY(width / 2 + 47, height / 2 + 16);
+        std::cout << "Двухпалубных: " << counter2;
+        GotoXY(width / 2 + 47, height / 2 + 17);
+        std::cout << "Трёхпалубных: " << counter3;
+        GotoXY(width / 2 + 47, height / 2 + 18);
+        std::cout << "Четырехпалубных: " << counter4;
         char x;
-        cleaning();
+        cleaning(8);
         currAmofShips++;
             do {
              m: setColor(White, Black);
-                GotoXY((width - 142) / 2 + 96, (height - 43) / 2+10+m);
-                if (try_input("\t\t\t\t\t\t\t\t\t\t\t\t\t\tВведите размерность корабля: ", length, 49, 52, "4") == false) {
-                    newGameMenu();
-                    return;
+                GotoXY((width - 142) / 2 + 99, (height - 43) / 2+10+m);
+                std::cout << "Введите размерность корабля:  ";
+                choice = getch();
+                if (choice == 0x31 && counter1 > 0) { // проверка на нажатие кнопки и не достиг ли лимит кораблей
+                    length = 1;
+                    counter1--; //если не достиг то отнимаем от максимально допустимых 1
                 }
-                cleaning();
-                if (length==1 && counter1 > 3) { //проверка количества корабликов размерности 1
-                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
-                    setColor(LightRed, Black);
-                    std::cout << "Максимальное количество кораблей размерностью 1 - 4 шт.\n";
-                    Sleep(1500);
-                    cleaning();
-                    goto m; //если проверка не прошла возвращаемся в начало
+                else if (choice == 0x31 && counter1 <= 0) { // если достиг то выводится анимация и возврат в начало цикла
+                    shipCountAnim("Однопалубных: ",15,counter1);
+                    goto m;
                 }
-                else if (length == 1) {//если проверка прошла то ++ к счетчику корабликов 1
-                    counter1++;
+                if (choice == 0x32 && counter2 > 0) {
+                    length = 2;
+                    counter2--;
                 }
-                if (length == 2 && counter2 > 2) { //проверка количества корабликов размерности 2
-                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
-                    setColor(LightRed, Black);
-                    std::cout << "Максимальное количество кораблей размерностью 2 - 3 шт.\n";
-                    Sleep(1500);
-                    cleaning();
-                    goto m; //если проверка не прошла возвращаемся в начало
+                else if (choice == 0x32 && counter2 <= 0) {
+                    shipCountAnim("Двухпалубных: ", 16, counter2);
+                    goto m;
                 }
-                else if (length == 2) {//если проверка прошла то ++ к счетчику корабликов 2
-                    counter2++;
+                if (choice == 0x33 && counter3 > 0) {
+                    length = 3;
+                    counter3--;
                 }
-                if (length == 3 && counter3 > 1) { //проверка количества корабликов размерности 3
-                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
-                    setColor(LightRed, Black);
-                    std::cout << "Максимальное количество кораблей размерностью 3 - 2 шт.\n";
-                    Sleep(1500);
-                    cleaning();
-                    goto m; //если проверка не прошла возвращаемся в начало
+                else if (choice == 0x33 && counter3 <= 0) {
+                    shipCountAnim("Трёхпалубных: ", 17, counter3);
+                    goto m;
                 }
-                else if (length == 3) {//если проверка прошла то ++ к счетчику корабликов 3
-                    counter3++;
+                if (choice == 0x34 && counter4 > 0) {
+                    length = 4;
+                    counter4--;
                 }
-                if (length == 4 && counter4 > 0) { //проверка количества корабликов размерности 3
-                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m);
-                    setColor(LightRed, Black);
-                    std::cout << "Максимальное количество кораблей размерностью 4 - 1 шт.\n";
-                    Sleep(1500);
-                    cleaning();
-                    goto m; //если проверка не прошла возвращаемся в начало
+                else if (choice == 0x34 && counter4 <= 0) {
+                    shipCountAnim("Четырехпалубных: ", 18, counter4);
+                    goto m;
                 }
-                else if (length == 4) {//если проверка прошла то ++ к счетчику корабликов 3
-                    counter4++;
+                if (choice >= 0x31 && choice <= 0x34) {
+                    setColor(Yellow, Black);
+                    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 8 + m);
+                    std::cout << "Введите координаты для " << choice << "-палубного корабля.";
                 }
             } while (length > 4 || length != 1 && length != 2 && length != 3 && length != 4);
         for (int i = 0; i < length; i++)
         {
-        n: setColor(White, Black);
+        setColor(White, Black);
                 GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m + i);
                 std::cout << "Enter x" << i << " and y" << i << " :                                ";
                 GotoXY((width - 142) / 2 + 117, (height - 43) / 2 + 10 + m + i);
@@ -524,27 +525,26 @@ void shipConstructor(char field[sz][szx]) {
                         GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + m + i);
                         std::cout << "Ошибка! Некорректные данные.\n";
                         Sleep(1000);
-                        cleaning();
-                        goto n;
+                        cleaning(8);
+                        goto m;
                     }
         }
         sh[currAmofShips - 1].length = length;
         sh[currAmofShips - 1].hp = length;
     }
     showField(fieldPlayer);
-    cleaning();
+    cleaning(22);
     GotoXY(width / 2 + 28, height / 2);
-    try_input_char("\t\t\t\t\t\t\t\t\t\t\t\t\t\tСохранить расстановку? y / n: ", choice, 49, 130, "z");
-    GotoXY(width / 2 + 56, height / 2);
+    std::cout << "Сохранить расстановку? y\\n";
+    choice = getch();
     switch (choice) {
     case'y':
         saveInFile();
         break;
-    case'Y':
-        saveInFile();
+    case'n':
         break;
     }
-    cleaning();
+    cleaning(8);
     showField(fieldPlayer);
         while (true) {
         aiPlayer(fieldPlayer);
@@ -586,6 +586,7 @@ void saveInFile() { //сохранениие поля игрока в файл
     std::cout << "Сохранено под названием: " << name << ".save";
     Sleep(2000);
 }
+
 std::string createFolders() {
     char buff[UNLEN + 1];
     DWORD username_len = UNLEN + 1;
@@ -597,6 +598,7 @@ std::string createFolders() {
     CreateDirectory(data(savePath), NULL);
     return folderPath;
 }
+
 std::vector<std::string> file_name_list(const std::string& path_to_dir)
 {
     namespace fs = std::filesystem;
@@ -613,6 +615,7 @@ std::vector<std::string> file_name_list(const std::string& path_to_dir)
 
     else return {};
 }
+
 std::string Sub(const std::string& s1, const std::string& s2)
 {
     int pos1 = s1.find(s2);
@@ -790,15 +793,11 @@ void loadFromFile() { //загрузка
             Sleep(110);
         }
 }
-void cleaning() {
-    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22 );
-    std::cout << "                                                               ";  //очистка ввода
-    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 23);
-    std::cout << "                                            ";
-    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 24);
-    std::cout << "                                            ";
-    GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 25);
-    std::cout << "                                            ";
+void cleaning(int iterCount) {
+    for (int i = 0; i < iterCount; i++) {
+        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 20+i);
+        std::cout << "                                                               ";  //очистка ввода
+    }
 }
 void randFieldIntegratorBot()
 {
@@ -1005,6 +1004,24 @@ void animation() {
         }
     }
 }
+
+void shipCountAnim(std::string str, int posY, int shipCounter) {
+    setColor(LightRed, Black);
+    GotoXY(width / 2 + 47, height / 2 + posY);
+    std::cout << str << shipCounter;
+    Sleep(200);
+    setColor(White, Black);
+    GotoXY(width / 2 + 47, height / 2 + posY);
+    std::cout << str << shipCounter;
+    Sleep(200);
+    setColor(LightRed, Black);
+    GotoXY(width / 2 + 47, height / 2 + posY);
+    std::cout << str << shipCounter;
+    Sleep(200);
+    setColor(White, Black);
+    GotoXY(width / 2 + 47, height / 2 + posY);
+    std::cout << str << shipCounter;
+}
 void AI(std::string mode)
 {
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -1065,17 +1082,16 @@ void AI(std::string mode)
         showField(fieldPlayer);
         char choice;
         GotoXY(width / 2 + 28, height / 2);
-        try_input_char("\t\t\t\t\t\t\t\t\t\t\t\t\t\tСохранить расстановку? y / n: ", choice, 49, 130, "z");
-        GotoXY(width / 2 + 56, height / 2);
+        std::cout << "Сохранить расстановку? y\\n";
+        choice = getch();
         switch (choice) {
         case'y':
             saveInFile();
             break;
-        case'Y':
-            saveInFile();
+            default:
             break;
         }
-        cleaning();
+        cleaning(8);
         while (true) {
             aiPlayer(fieldPlayer);
             Sleep(1500);

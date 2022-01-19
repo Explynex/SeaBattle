@@ -24,7 +24,7 @@ void draw_progress_bar(int percents) {
     fflush(stdout);
 }
 
-bool in_range(char* buff, const char* max) 
+/*bool in_range(char* buff, const char* max)
 {
     int lb = strlen(buff), lm = strlen(max);
     return (lb != lm) ? (lb < lm) : strcmp(max, buff) >= 0;
@@ -93,4 +93,4 @@ bool try_input_char(const char* title, char& value, int minKey, int maxKey, cons
     } while (key != VK_ESCAPE);
 
     return false;
-}
+}*/
