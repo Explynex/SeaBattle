@@ -33,7 +33,7 @@ public:
     int x[4], y[4];
 };
 ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
-char fieldPlayer[sz][szx], fieldBot[sz][szx], genField[sz][sz];
+char fieldPlayer[sz][szx], fieldBot[sz][szx];
 void gameoverchecker()
 {
     if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0)
@@ -322,6 +322,8 @@ void hitShip(int x, int y, char field[sz][szx]) { //функция снятия 
                         //   std::cout<<"game over"<<std::endl;
                         shipDrown(k, field);
                     }
+                    showField(field);
+                    gameoverchecker();
                 }
             }
         }
@@ -332,10 +334,8 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
     player = false;
     while (shOnfire)
     {
-        int h = 1;
         while (shOnfire) //генерация направления для нового выстрела
         {
-            srand(time(NULL) + h++);
             direction = rand() % 4 + 1;
             // std::cout<<"generated dir "<<direction<<std::endl;
             if (direction == 1 && d1 && (field[yOld - dx1][xOld] != missed && field[yOld - dx1][xOld] != drownSh && field[yOld - dx1][xOld] != boarder))
@@ -446,7 +446,6 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     }
     else
     {
-        srand(time(NULL));
         while (true) //первый рандомный выстрел
         {
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + m + 6);
@@ -651,7 +650,6 @@ void saveInFile() { //сохранениие поля игрока в файл
     std::cout << "Сохранено под названием: " << name << ".save";
     Sleep(2000);
 }
-
 std::string createFolders() {
     char buff[UNLEN + 1];
     DWORD username_len = UNLEN + 1;
@@ -663,7 +661,6 @@ std::string createFolders() {
     CreateDirectory(data(savePath), NULL);
     return folderPath;
 }
-
 std::vector<std::string> file_name_list(const std::string& path_to_dir)
 {
     namespace fs = std::filesystem;
@@ -680,7 +677,6 @@ std::vector<std::string> file_name_list(const std::string& path_to_dir)
 
     else return {};
 }
-
 void loadFromFile() { //загрузка
     std::vector<std::string> menu;
     system("cls");
@@ -844,53 +840,31 @@ void cleaning(int iterCount) {
         std::cout << "                                                               ";  //очистка ввода
     }
 }
-void randFieldIntegratorBot()
+void randFieldIntegrator(char genField[sz][szx],int start)
 {
+    int m = 0;
     for (int i = 0; i < sz; i++)
     {
         for (int k = 0; k < sz; k++)
         {
             if (genField[i][k] == aroundSh)
                 genField[i][k] = ocean;
-            fieldBot[i][k] = genField[i][k];
         }
     }
-    for (int i = 10; i < 20; i++)
+    for (int i=start; i < start+10; i++)
     {
-        sh[i].length = shgen[i - 10].length;
-        sh[i].hp = shgen[i - 10].length;
-        for (int k = 0; k < shgen[i - 10].length; k++)
+        sh[i].length = shgen[m].length;
+        sh[i].hp = shgen[m].length;
+        for (int k = 0; k < shgen[m].length; k++)
         {
-            sh[i].x[k] = shgen[i - 10].x[k];
-            sh[i].y[k] = shgen[i - 10].y[k];
+            sh[i].x[k] = shgen[m].x[k];
+            sh[i].y[k] = shgen[m].y[k];
         }
+        m++;
 
     }
 }
-void randFieldIntegratorPlayer()
-{
-    for (int i = 0; i < sz; i++)
-    {
-        for (int k = 0; k < sz; k++)
-        {
-            if (genField[i][k] == aroundSh)
-                genField[i][k] = ocean;
-            fieldPlayer[i][k] = genField[i][k];
-        }
-    }
-    for (int i = 0; i < 10; i++)
-    {
-        sh[i].length = shgen[i].length;
-        sh[i].hp = shgen[i].length;
-        for (int k = 0; k < shgen[i].length; k++)
-        {
-            sh[i].x[k] = shgen[i].x[k];
-            sh[i].y[k] = shgen[i].y[k];
-        }
-
-    }
-}
-void shiparound(int shipNum)
+void shiparound(int shipNum, char genField[sz][szx])
 {
     for (int i = 0; i < shgen[shipNum].length; i++)
     {
@@ -906,13 +880,12 @@ void shiparound(int shipNum)
         }
     }
 }
-void generator(int shipNum)
+void generator(int shipNum, char genField[sz][szx])
 {
     int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld;
     bool d1 = true, d2 = true, d3 = true, d4 = true;
     for (int i = 0; i < shgen[shipNum].length; i++)
     {
-        srand(time(NULL) + i);
         while (i == 0)
         {
             x = rand() % (sz - 1) + 1;
@@ -927,12 +900,9 @@ void generator(int shipNum)
         }
         if (i > 0)
         {
-            int k = 1;
             while (true)
             {
-                srand(time(NULL) + k);
                 direction = rand() % 4 + 1;
-                k++;
                 if (direction == 1 && d1 && (genField[yOld - dx1][xOld] != aroundSh && genField[yOld - dx1][xOld] != boarder))
                 {
                     y = yOld - dx1;
@@ -995,11 +965,11 @@ void generator(int shipNum)
         // cout<<shgen[shipNum].x[i]<<" "<<shgen[shipNum].y[i]<<" "<<i+1<<" dx^"<<dx1<<dx2<<dx3<<dx4<<endl;
         if (i + 1 == shgen[shipNum].length)
         {
-            shiparound(shipNum);
+            shiparound(shipNum,genField);
         }
     }
 }
-void randomgen(std::string whose)
+void randomgen(std::string whose,char genField[sz][szx])
 {
     int curSh = 0;
     fieldBoarder(genField);
@@ -1008,16 +978,14 @@ void randomgen(std::string whose)
         for (int k = 0; k < 5 - i; k++)
         {
             shgen[curSh].length = i;
-            generator(curSh);
+            generator(curSh,genField);
             curSh++;
-            if (i > 1)
-                Sleep(999);
         }
     }
     if (whose == "player")
-        randFieldIntegratorPlayer();
+        randFieldIntegrator(genField,0);
     else
-        randFieldIntegratorBot();
+        randFieldIntegrator(genField,10);
 }
 void progress(int sleeptime) {
     for (int i = 0; i <= 100; ++i) {  //рисование прогресс бара псевдо-загрузки для того чтоб картинка не накладывалась друг на друга
@@ -1068,7 +1036,7 @@ void shipCountAnim(std::string str, int posY, int shipCounter) {
     Sleep(200);
     setColor(White, Black);
     GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout << str << shipCounter;
+    std::cout<<str << shipCounter;
 }
 void AI(std::string mode)
 {
@@ -1079,6 +1047,7 @@ void AI(std::string mode)
     width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left;
     fieldBoarder(fieldPlayer);
     fieldBoarder(fieldBot);
+    srand(time(NULL));
     /*fieldBot[5][5] = aliveSh;
     fieldBot[5][4] = aliveSh;
     fieldBot[5][3] = aliveSh;
@@ -1105,13 +1074,13 @@ void AI(std::string mode)
     sh[11].x[3] = 5;
     sh[11].y[3] = 2;*/
     if (mode == "constructor") {
-        std::thread th(randomgen, "bot");
+        std::thread th(randomgen, "bot",fieldBot);
         progress(3);
         shipConstructor(fieldPlayer);
         th.join();
     }
     if (mode == "fromfile") {
-        std::thread th(randomgen, "bot");
+        std::thread th(randomgen, "bot",fieldBot);
         progress(3);
         loadFromFile();
         th.join();
@@ -1119,8 +1088,8 @@ void AI(std::string mode)
     if (mode == "random")
     {
         auto f = std::async(std::launch::async, animation);
-        randomgen("player");
-        randomgen("bot");
+        randomgen("player",fieldPlayer);
+        randomgen("bot",fieldBot);
         threadMutex.lock();
         ExitFlag = true;
         threadMutex.unlock();
@@ -1140,7 +1109,8 @@ void AI(std::string mode)
             break;
         }
         cleaning(8);
-        while (true) {
+        while(true)
+        {
             aiPlayer(fieldPlayer);
             gameoverchecker();
             Sleep(1500);
