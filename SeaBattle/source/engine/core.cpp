@@ -6,6 +6,7 @@
 #include <Lmcons.h>
 #include <filesystem>
 #include "newGameMenu.h"
+#include "menu.h"
 #include <thread>
 #include <future>
 #include <mutex>
@@ -33,8 +34,67 @@ public:
 };
 ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx],genField[sz][sz];
+void gameoverchecker()
+{
+    if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0)
+    {
+        system("cls");
+        setColor(White, Black);
+        GotoXY((width - 45) / 2, (height - 11) / 2 - 3);
+        std::cout << "█  █ ████ █   █ ████ █    █  ██  ███ ███ ████";
+        GotoXY((width - 45) / 2, (height - 11) / 2 + 1 - 3);
+        std::cout << "█ █  █  █ ██ ██ █  █ █    █ █  █  █  █   █  █";
+        GotoXY((width - 45) / 2, (height - 11) / 2 + 2 - 3);
+        std::cout << "██   █  █ █ █ █ █  █ ████ ████ █  █  ███ ████";
+        GotoXY((width - 45) / 2, (height - 11) / 2 + 3 - 3);
+        std::cout << "█ █  █  █ █   █ █  █ █  █ █ █  █  █  █   █   ";
+        GotoXY((width - 45) / 2, (height - 11) / 2 + 4 - 3);
+        std::cout << "█  █ ████ █   █ █  █ ████ █  ██   █  ███ █   ";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 6 - 3);
+        std::cout << "████ ████ ████ ███  ███  █  █   ██";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 7 - 3);
+        std::cout << "█  █ █  █ █    █    █ █  █  █  █ █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 8 - 3);
+        std::cout << "█  █ █  █ ████ ███  █ █  █ ██ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 9 - 3);
+        std::cout << "█  █ █  █ █  █ █   █████ ██ █ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 10 - 3);
+        std::cout << "█  █ ████ ████ ███ █   █ █  █ █  █";
+        GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+        system("pause");
+        menu();
+    }
 
+    if (sh[10].hp + sh[11].hp + sh[12].hp + sh[13].hp + sh[14].hp + sh[15].hp + sh[16].hp + sh[17].hp + sh[18].hp + sh[19].hp == 0)
+    {
+        system("cls");
+        setColor(White, Black);
+        GotoXY((width - 34) / 2, (height - 11) / 2 - 3);
+        std::cout << "      █  █ ███ ████ ████ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 1 - 3);
+        std::cout << "      █  █ █   █  █ █  █ █ █ ";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 2 - 3);
+        std::cout << "      █ ██ █   ████ █  █ ██  ";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 3 - 3);
+        std::cout << "      ██ █ █   █    █  █ █ █ ";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 4 - 3);
+        std::cout << "      █  █ █   █    ████ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 6 - 3);
+        std::cout << "████ ████ ████ ███  ███  █  █   ██";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 7 - 3);
+        std::cout << "█  █ █  █ █    █    █ █  █  █  █ █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 8 - 3);
+        std::cout << "█  █ █  █ ████ ███  █ █  █ ██ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 9 - 3);
+        std::cout << "█  █ █  █ █  █ █   █████ ██ █ █  █";
+        GotoXY((width - 34) / 2, (height - 11) / 2 + 10 - 3);
+        std::cout << "█  █ ████ ████ ███ █   █ █  █ █  █";
+        GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+        system("pause");
+        menu();
+    }
 
+}
 void humanPlayer()
 {
     int m = 0;
@@ -83,7 +143,6 @@ void humanPlayer()
         {
             fieldBot[y][x1] = drownSh;
             hitShip(x1, y, fieldBot);
-            showField(fieldBot);
         }
         else
         {
@@ -240,8 +299,10 @@ void hitShip(int x, int y, char field[sz][szx]) { //функция снятия 
                     if (sh[k].hp == 0)
                     {
                         //   std::cout<<"game over"<<std::endl;
-                        shipDrown(k, field);
+                        shipDrown(k, field); 
                     }
+                    showField(field);
+                    gameoverchecker();
                 }
             }
         }
@@ -270,9 +331,10 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
     player = false;
     while (shOnfire)
     {
+        int h = 1;
         while (shOnfire) //генерация направления для нового выстрела
         {
-            srand(time(NULL));
+            srand(time(NULL)+h++);
             direction = rand() % 4 + 1;
             // std::cout<<"generated dir "<<direction<<std::endl;
             if (direction == 1 && d1 && (field[yOld - dx1][xOld] != missed && field[yOld - dx1][xOld] != drownSh && field[yOld - dx1][xOld] != boarder))
@@ -311,7 +373,6 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
             if (direction == 4)
                 d4 = false;
             showField(field);
-            Sleep(3000);
             // std::cout<<d1<<d2<<d3<<d4<<std::endl; тест направлений
             break;
         }
@@ -339,7 +400,7 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
             hitShip(x, y, field);
         }
         showField(field);
-        Sleep(3000);
+        Sleep(1000);
     }
     if (!shOnfire)
         aiPlayer(field);
@@ -402,8 +463,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
             xOld = x;
             yOld = y;
             shOnfire = true;
-            hitShip(x, y, field);
-            showField(field);
+            hitShip(x, y, field);   
             Sleep(1000);
             shipOnfire(field);
         }
@@ -548,8 +608,10 @@ void shipConstructor(char field[sz][szx]) {
     showField(fieldPlayer);
         while (true) {
         aiPlayer(fieldPlayer);
+        gameoverchecker();
         Sleep(1500);
         humanPlayer();
+        gameoverchecker();
         Sleep(1500);
     }
 }
@@ -784,8 +846,10 @@ void loadFromFile() { //загрузка
                     system("cls");
                     while (!false) {
                         aiPlayer(fieldPlayer);
+                        gameoverchecker();
                         Sleep(1500);
                         humanPlayer();
+                        gameoverchecker();
                         Sleep(1500);
                     }
                     }
@@ -863,11 +927,11 @@ void shiparound(int shipNum)
 }
 void generator(int shipNum)
 {
-    srand(time(NULL));
     int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld;
     bool d1 = true, d2 = true, d3 = true, d4 = true;
     for (int i = 0; i < shgen[shipNum].length; i++)
     {
+        srand(time(NULL)+i);
         while (i == 0)
         {
             x = rand() % (sz - 1) + 1;
@@ -882,10 +946,12 @@ void generator(int shipNum)
         }
         if (i > 0)
         {
+            int k = 1;
             while (true)
             {
-                srand(time(NULL));
+                srand(time(NULL)+k);
                 direction = rand() % 4 + 1;
+                k++;
                 if (direction == 1 && d1 && (genField[yOld - dx1][xOld] != aroundSh && genField[yOld - dx1][xOld] != boarder))
                 {
                     y = yOld - dx1;
@@ -963,6 +1029,8 @@ void randomgen(std::string whose)
             shgen[curSh].length = i;
             generator(curSh);
             curSh++;
+            if(i>1)
+            Sleep(999);
         }
     }
     if (whose == "player")
@@ -1004,7 +1072,6 @@ void animation() {
         }
     }
 }
-
 void shipCountAnim(std::string str, int posY, int shipCounter) {
     setColor(LightRed, Black);
     GotoXY(width / 2 + 47, height / 2 + posY);
@@ -1094,8 +1161,10 @@ void AI(std::string mode)
         cleaning(8);
         while (true) {
             aiPlayer(fieldPlayer);
+            gameoverchecker();
             Sleep(1500);
             humanPlayer();
+            gameoverchecker();
             Sleep(1500);
         }
     }
