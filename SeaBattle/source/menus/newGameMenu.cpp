@@ -6,18 +6,18 @@
 
 
 int newGameMenu() {
-    HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
     int height = scrBufferInfo.srWindow.Bottom - scrBufferInfo.srWindow.Top + 1;
-    int width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left+1 ;
-	std::string Menu[4] = { " Расставить вручную\n", " Загрузить расстановку\n", " Сгенерировать случайно\n", " Вернуться в главное меню\n"};
-	int point = 0;
+    int width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left + 1;
+    std::string Menu[4] = { " Расставить вручную\n", " Загрузить расстановку\n", " Сгенерировать случайно\n", " Вернуться в главное меню\n" };
+    int point = 0;
     while (true)
     {
         int m = 0;
         system("cls");
-        GotoXY((width - 34)/2, (height - 7) / 2 + m++);
+        GotoXY((width - 34) / 2, (height - 7) / 2 + m++);
         std::cout << "Меню расстановки кораблей на поле\n";
         GotoXY((width - 38) / 2, (height - 7) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -28,10 +28,10 @@ int newGameMenu() {
             {
                 GotoXY((width - 38) / 2, (height - 7) / 2 + m + i);
                 std::cout << "║";
-                GotoXY((width - 38) / 2+36, (height - 7) / 2 + m + i);
+                GotoXY((width - 38) / 2 + 36, (height - 7) / 2 + m + i);
                 std::cout << "║";
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-                GotoXY((width - 38) / 2+1, (height - 7) / 2 + m + i);
+                GotoXY((width - 38) / 2 + 1, (height - 7) / 2 + m + i);
                 std::cout << " >> " << Menu[i];
                 GotoXY(width / 2 - 51, (height - 7) / 2 + m + i);
             }
@@ -40,7 +40,7 @@ int newGameMenu() {
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
                 GotoXY((width - 38) / 2, (height - 7) / 2 + m + i);
                 std::cout << "║" << Menu[i];
-                GotoXY((width - 38) / 2+36, (height - 7) / 2 + m + i);
+                GotoXY((width - 38) / 2 + 36, (height - 7) / 2 + m + i);
                 std::cout << "║";
             }
         }
@@ -72,15 +72,15 @@ int newGameMenu() {
                 switch (point) {
                 case 0: {
                     AI("constructor");
-                    return 0;
+                    break;
                 }
                 case 1: {
                     AI("fromfile");
-                    return 0;
+                    break;
                 }
                 case 2: {
                     AI("random");
-                    return 0;
+                    break;
                 }
                 case 3: {
                     return 0;

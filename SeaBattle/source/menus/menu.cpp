@@ -32,7 +32,7 @@ int menu() {
     {
         int m = 0;
         system("cls");
-        GotoXY((width - 37) / 2+13, (height-6)/2+m++);
+        GotoXY((width - 37) / 2 + 13, (height - 6) / 2 + m++);
         std::cout << "Морской бой\n";
         GotoXY((width - 37) / 2, (height - 6) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -41,14 +41,14 @@ int menu() {
         {
             if (i == pointer)
             {
-                GotoXY((width-37)/2, (height - 6) / 2 + m+i);
+                GotoXY((width - 37) / 2, (height - 6) / 2 + m + i);
                 std::cout << "║";
-                GotoXY(width/ 2+17, (height - 6) / 2 + m + i);
+                GotoXY(width / 2 + 17, (height - 6) / 2 + m + i);
                 std::cout << "║";
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-                GotoXY((width - 37) / 2+2, (height - 6) / 2 + m + i);
+                GotoXY((width - 37) / 2 + 2, (height - 6) / 2 + m + i);
                 std::cout << " >> " << Menu[i];
-                GotoXY(width/2-51, (height - 6) / 2 + m + i);
+                GotoXY(width / 2 - 51, (height - 6) / 2 + m + i);
             }
             else
             {
@@ -91,11 +91,10 @@ int menu() {
                 }
                 case 1: {
                     std::cout << "\nComing soon..." << std::endl;
-                    break;
+                    return 0;
                 }
                 case 2: {
                     return 0;
-                    break;
                 }
                 }
             }

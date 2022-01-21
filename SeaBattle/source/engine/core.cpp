@@ -16,11 +16,10 @@ HANDLE hOut;
 COORD Pos;
 
 int width, height;
-bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false;
+bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false, game;
 int xOld = 0, yOld = 0, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, direction, currAmofShips = 0; //точка первого попадания по кораблю если он больше
 const int maxamountOfShips = 10;
 const char aroundSh = '.', drownSh = 'X', missed = '#', aliveSh = 'H', boarder = '*', ocean = ' ';
-
 class ship {
 public:
     int length = { 0 };
@@ -39,7 +38,7 @@ void gameoverchecker()
         WriteTitle(width, height, "aiwin");
         GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
         system("pause");
-        newGameMenu();
+        game = false;
     }
 
     if (sh[10].hp + sh[11].hp + sh[12].hp + sh[13].hp + sh[14].hp + sh[15].hp + sh[16].hp + sh[17].hp + sh[18].hp + sh[19].hp == 0)
@@ -49,7 +48,7 @@ void gameoverchecker()
         WriteTitle(width, height, "playerwin");
         GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
         system("pause");
-        newGameMenu();
+        game = false;
     }
 }
 void humanPlayer()
@@ -61,21 +60,32 @@ void humanPlayer()
     WriteTitle(width, height, "playermove");
     while (true)
     {
-
-        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
-        std::cout << "Координаты выстрела:                      ";
-        GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
-        std::cin >> x >> y;
-        x1 = x - '@';
-        if (x1 > 10)
-            x1 = x1 - 32;
-        if (fieldBot[y][x1] == aliveSh)
-        {
-            fieldBot[y][x1] = drownSh;
-            hitShip(x1, y, fieldBot);
-            showField(fieldBot);
-        }
-        else
+        do {
+            setColor(White, Black);
+            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
+            std::cout << "Координаты выстрела:                      ";
+            GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
+            std::cin >> x >> y;
+            x1 = x - '@';
+            if (x1 > 10)
+                x1 = x1 - 32;
+            if (fieldBot[y][x1] == aliveSh)
+            {
+                fieldBot[y][x1] = drownSh;
+                hitShip(x1, y, fieldBot);
+                if (!game)
+                    return;
+                showField(fieldBot);
+                break;
+            }
+            if (fieldBot[y][x1] != ocean || std::cin.fail()) {
+                setColor(LightRed, Black);
+                GotoXY((width - 150) / 2 + 99, (height - 43) / 2 + 10 + 8);
+                std::cout << "Ошибка! Некорректные данные.\n";
+                Sleep(1000);
+            }
+        } while (fieldBot[y][x1] != ocean || std::cin.fail());
+        if (fieldBot[y][x1] != aliveSh && fieldBot[y][x1] == ocean)
         {
             GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
             std::cout << "Промах!";
@@ -313,6 +323,8 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
                 d3 = false;
             }
             hitShip(x, y, field);
+            if (!game)
+                return;
         }
         showField(field);
         Sleep(1000);
@@ -352,6 +364,8 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
             yOld = y;
             shOnfire = true;
             hitShip(x, y, field);
+            if (!game)
+                return;
             shipOnfire(field);
         }
         else //если не попал первым выстрелом
@@ -366,7 +380,7 @@ void shipConstructor(char field[sz][szx]) {
     for (int counter = 0; counter < 1; counter++) {
         system("cls");
         showField(fieldPlayer);
-        WriteTitle(width,height,"construct");
+        WriteTitle(width, height, "construct");
         GotoXY(width / 2 + 28, height / 2 + 15);
         std::cout << "Доступные корабли:";
         GotoXY(width / 2 + 47, height / 2 + 15);
@@ -386,7 +400,7 @@ void shipConstructor(char field[sz][szx]) {
             std::cout << "Введите размерность корабля:  ";
             choice = getch();
             if (choice == 0x1B) {
-                newGameMenu();
+                game = false;
                 return;
             }
             if (choice == 0x31 && counter1 > 0) { // проверка на нажатие кнопки и не достиг ли лимит кораблей
@@ -470,12 +484,14 @@ void shipConstructor(char field[sz][szx]) {
     case'y':
         saveInFile();
         break;
-    case'n':
+    case'Y':
+        saveInFile();
+        break;
+    default:
         break;
     }
     cleaning(8);
     showField(fieldPlayer);
-    gameCycle();
 }
 void saveInFile() { //сохранениие поля игрока в файл
     std::string name;
@@ -539,7 +555,7 @@ std::vector<std::string> file_name_list(const std::string& path_to_dir) // ко�
 
     else return {};
 }
-void predprosmotr(std::string menu,int pointer,int counter)
+void predprosmotr(std::string menu, int pointer, int counter)
 {
     char x;
     std::ifstream fin;
@@ -561,7 +577,7 @@ void predprosmotr(std::string menu,int pointer,int counter)
     fin.close();
     for (int i = 0; i < sz; i++)
     {
-        GotoXY((width - 54) / 2+36, (height - 12) / 2+i);
+        GotoXY((width - 54) / 2 + 36, (height - 12) / 2 + i);
         for (int k = 0; k < szx; k++)
         {
             if (fieldPlayer[i][k] == boarder)
@@ -578,6 +594,7 @@ void predprosmotr(std::string menu,int pointer,int counter)
 }
 void loadFromFile() { //загрузка
     std::vector<std::string> menu;
+    bool work = true;
     system("cls");
     char x;
     char buff[UNLEN + 1];
@@ -597,97 +614,110 @@ void loadFromFile() { //загрузка
     while (true) {
         system("cls");
         setColor(White, Black);
-        GotoXY((width-54)/2, (height-4-counter)/2);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2);
         std::cout << "╔════════════════════════╗";
-        GotoXY((width - 54) / 2, (height - 4 - counter) / 2+1);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 1);
         std::cout << "║   Список сохранений    ║";
-        GotoXY((width - 54) / 2, (height - 4 - counter) / 2+2);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2);
         std::cout << "╠════════════════════════╣";
         for (int i = 0; i < counter; i++) {
             if (i == pointer) { //если равно строке на которой находится пользователь
                 if (counter < 10) {
-                    GotoXY((width - 54) / 2+4, (height - 4 - counter) / 2+2 + i + 1);
+                    GotoXY((width - 54) / 2 + 4, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(LightRed, Black);
                     std::cout << " >> " << menu[i] << "   ";
                     GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(White, Black);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
                 else if (counter >= 10 && counter <= 40) {
-                    GotoXY((width - 54) / 2+5, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 5, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(LightRed, Black);
                     std::cout << " >> " << menu[i] << "   ";
                     GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(White, Black);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
             }
             else { //выводит то что не выбрано
                 if (counter < 10) {
-                    GotoXY((width - 54) / 2+5, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 5, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << menu[i];
                     GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
                 else if (counter >= 10 && counter <= 40) {
-                    GotoXY((width - 54) / 2+6, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 6, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << menu[i];
                     GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
+                    GotoXY((width - 54) / 2 + 25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
             }
         }
         GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 3 + counter);
         std::cout << "╚════════════════════════╝";
-        while (GetAsyncKeyState(VK_RETURN) == 0){
-            predprosmotr(menu[pointer],pointer,counter);
-            if (GetAsyncKeyState(0x57) != 0){
+        while (GetAsyncKeyState(VK_RETURN) == 0) {
+            if (counter != 0) {
+                predprosmotr(menu[pointer], pointer, counter);
+            }
+            if (GetAsyncKeyState(0x57) != 0) {
                 pointer -= 1;
-                if (pointer == -1){
+                if (pointer == -1) {
                     pointer = counter - 1;
                 }
                 break;
             }
-            if (GetAsyncKeyState(0x53) != 0){
+            if (GetAsyncKeyState(0x53) != 0) {
                 pointer += 1;
-                if (pointer == counter){
+                if (pointer == counter) {
                     pointer = 0;
                 }
                 break;
             }
             if (GetAsyncKeyState(VK_ESCAPE) != 0) {
-                newGameMenu();
+                game = false;
                 return;
             }
             if (GetAsyncKeyState(VK_DELETE) != 0) {
                 char key;
                 std::string FN = createFolders() + "\\Saves\\" + menu[pointer] + ".save";
-                GotoXY((width - 54) / 2+2, (height - 4 - counter) / 2 + 5 + counter);
+                GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
                 std::cout << "Вы уверены что хотите удалить расстановку '" << menu[pointer] << "'? y\\n";
                 key = getch();
                 switch (key) {
                 case 'y': {
                     remove(FN.c_str());
-                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
                     setColor(LightGreen, Black);
                     std::cout << "Расстановка '" << menu[pointer] << "' успешно удалена.                     ";
                     setColor(White, Black);
-                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 9 + counter);
                     system("pause");
                     loadFromFile();
                     return;
                 }
-                case 'n': {
-                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
-                    std::cout << "                                                                           ";
+                case 'Y': {
+                    remove(FN.c_str());
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
+                    setColor(LightGreen, Black);
+                    std::cout << "Расстановка '" << menu[pointer] << "' успешно удалена.                     ";
+                    setColor(White, Black);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 9 + counter);
+                    system("pause");
+                    loadFromFile();
+                    return;
+                }
+                default: {
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
+                    std::cout << "                                                                                       ";
                     break;
                 }
                 }
@@ -716,7 +746,7 @@ void loadFromFile() { //загрузка
                 GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
                 system("pause");
                 Sleep(1000);
-                gameCycle();
+                return;
             }
         }
         Sleep(110);
@@ -729,7 +759,7 @@ void cleaning(int iterCount) {
         std::cout << "                                                               ";  //очистка ввода
     }
 }
-void randFieldIntegrator(char genField[sz][szx],int start)
+void randFieldIntegrator(char genField[sz][szx], int start)
 {
     int m = 0;
     for (int i = 0; i < sz; i++)
@@ -740,7 +770,7 @@ void randFieldIntegrator(char genField[sz][szx],int start)
                 genField[i][k] = ocean;
         }
     }
-    for (int i=start; i < start+10; i++)
+    for (int i = start; i < start + 10; i++)
     {
         sh[i].length = shgen[m].length;
         sh[i].hp = shgen[m].length;
@@ -854,11 +884,11 @@ void generator(int shipNum, char genField[sz][szx])
         // cout<<shgen[shipNum].x[i]<<" "<<shgen[shipNum].y[i]<<" "<<i+1<<" dx^"<<dx1<<dx2<<dx3<<dx4<<endl;
         if (i + 1 == shgen[shipNum].length)
         {
-            shiparound(shipNum,genField);
+            shiparound(shipNum, genField);
         }
     }
 }
-void randomgen(std::string whose,char genField[sz][szx])
+void randomgen(std::string whose, char genField[sz][szx])
 {
     int curSh = 0;
     fieldBoarder(genField);
@@ -867,14 +897,14 @@ void randomgen(std::string whose,char genField[sz][szx])
         for (int k = 0; k < 5 - i; k++)
         {
             shgen[curSh].length = i;
-            generator(curSh,genField);
+            generator(curSh, genField);
             curSh++;
         }
     }
     if (whose == "player")
-        randFieldIntegrator(genField,0);
+        randFieldIntegrator(genField, 0);
     else
-        randFieldIntegrator(genField,10);
+        randFieldIntegrator(genField, 10);
 }
 
 void progress(int sleeptime) {
@@ -902,19 +932,25 @@ void shipCountAnim(std::string str, int posY, int shipCounter) {
     Sleep(200);
     setColor(White, Black);
     GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout<<str << shipCounter;
+    std::cout << str << shipCounter;
 }
 
 void gameCycle() {
-    system("cls");
-    while (true)
-    {
-        aiPlayer(fieldPlayer);
+    if (game) {
+        system("cls");
+        while (true)
+        {
+            humanPlayer();
+            aiPlayer(fieldPlayer);
+        }
     }
+    else
+        return;
 }
 
 void AI(std::string mode)
 {
+    game = true;
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
@@ -931,10 +967,11 @@ void AI(std::string mode)
     if (mode == "fromfile") {
         progress(3);
         loadFromFile();
+
     }
     if (mode == "random")
     {
-        randomgen("player",fieldPlayer);
+        randomgen("player", fieldPlayer);
         progress(1);
         system("cls");
         showField(fieldPlayer);
@@ -950,6 +987,9 @@ void AI(std::string mode)
             break;
         }
         cleaning(8);
-        gameCycle();
     }
+    gameCycle();
+    system("cls");
+    GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+    system("pause");
 }
