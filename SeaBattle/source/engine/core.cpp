@@ -30,7 +30,7 @@ public:
 ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
 
-int gameoverchecker()
+void gameoverchecker()
 {
     if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0)
     {
@@ -539,7 +539,43 @@ std::vector<std::string> file_name_list(const std::string& path_to_dir) // ко�
 
     else return {};
 }
+void predprosmotr(std::string menu,int pointer,int counter)
+{
+    char x;
+    std::ifstream fin;
+    fieldBoarder(fieldPlayer);
+    fin.open(createFolders() + "\\Saves\\" + menu + ".save");
+    for (int i = 0; i < 10; i++) {
+        fin >> sh[i].length;
+        sh[i].hp = sh[i].length;
+        for (int j = 0; j < sh[i].length; j++)
+        {
+            fin >> x >> sh[i].y[j];
+            if (x >= 65 && x <= 74)
+                sh[i].x[j] = x - 64;
+            else if (x >= 97 && x <= 106)
+                sh[i].x[j] = x - 96;
+            fieldPlayer[sh[i].y[j]][sh[i].x[j]] = aliveSh;
+        }
+    }
+    fin.close();
+    for (int i = 0; i < sz; i++)
+    {
+        GotoXY((width - 54) / 2+36, (height - 12) / 2+i);
+        for (int k = 0; k < szx; k++)
+        {
+            if (fieldPlayer[i][k] == boarder)
+                setColor(LightBlue, LightBlue);
+            else if (fieldPlayer[i][k] == ocean)
+                setColor(White, White);
+            else if (fieldPlayer[i][k] == aliveSh)
+                setColor(LightGreen, LightGreen);
+            std::cout << fieldPlayer[i][k] << fieldPlayer[i][k];
+            setColor(White, Black);
+        }
+    }
 
+}
 void loadFromFile() { //загрузка
     std::vector<std::string> menu;
     system("cls");
@@ -561,57 +597,58 @@ void loadFromFile() { //загрузка
     while (true) {
         system("cls");
         setColor(White, Black);
-        GotoXY(1, 1);
+        GotoXY((width-54)/2, (height-4-counter)/2);
         std::cout << "╔════════════════════════╗";
-        GotoXY(1, 2);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2+1);
         std::cout << "║   Список сохранений    ║";
-        GotoXY(1, 3);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2+2);
         std::cout << "╠════════════════════════╣";
         for (int i = 0; i < counter; i++) {
             if (i == pointer) { //если равно строке на которой находится пользователь
                 if (counter < 10) {
-                    GotoXY(5, 3 + i + 1);
+                    GotoXY((width - 54) / 2+4, (height - 4 - counter) / 2+2 + i + 1);
                     setColor(LightRed, Black);
                     std::cout << " >> " << menu[i] << "   ";
-                    GotoXY(1, 3 + i + 1);
+                    GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(White, Black);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY(26, 3 + i + 1);
+                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
                 else if (counter >= 10 && counter <= 40) {
-                    GotoXY(6, 3 + i + 1);
+                    GotoXY((width - 54) / 2+5, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(LightRed, Black);
                     std::cout << " >> " << menu[i] << "   ";
-                    GotoXY(1, 3 + i + 1);
+                    GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     setColor(White, Black);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY(26, 3 + i + 1);
+                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
             }
             else { //выводит то что не выбрано
                 if (counter < 10) {
-                    GotoXY(6, 3 + i + 1);
+                    GotoXY((width - 54) / 2+5, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << menu[i];
-                    GotoXY(1, 3 + i + 1);
+                    GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY(26, 3 + i + 1);
+                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
                 else if (counter >= 10 && counter <= 40) {
-                    GotoXY(7, 3 + i + 1);
+                    GotoXY((width - 54) / 2+6, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << menu[i];
-                    GotoXY(1, 3 + i + 1);
+                    GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║ " << i + 1 << ".";
-                    GotoXY(26, 3 + i + 1);
+                    GotoXY((width - 54) / 2+25, (height - 4 - counter) / 2 + 2 + i + 1);
                     std::cout << "║";
                 }
             }
         }
-        GotoXY(1, 4 + counter);
+        GotoXY((width - 54) / 2, (height - 4 - counter) / 2 + 3 + counter);
         std::cout << "╚════════════════════════╝";
         while (GetAsyncKeyState(VK_RETURN) == 0){
+            predprosmotr(menu[pointer],pointer,counter);
             if (GetAsyncKeyState(0x57) != 0){
                 pointer -= 1;
                 if (pointer == -1){
@@ -633,23 +670,23 @@ void loadFromFile() { //загрузка
             if (GetAsyncKeyState(VK_DELETE) != 0) {
                 char key;
                 std::string FN = createFolders() + "\\Saves\\" + menu[pointer] + ".save";
-                GotoXY(3, 6 + counter);
+                GotoXY((width - 54) / 2+2, (height - 4 - counter) / 2 + 5 + counter);
                 std::cout << "Вы уверены что хотите удалить расстановку '" << menu[pointer] << "'? y\\n";
                 key = getch();
                 switch (key) {
                 case 'y': {
                     remove(FN.c_str());
-                    GotoXY(3, 6 + counter);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
                     setColor(LightGreen, Black);
                     std::cout << "Расстановка '" << menu[pointer] << "' успешно удалена.                     ";
                     setColor(White, Black);
-                    GotoXY(3, 8 + counter);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
                     system("pause");
                     loadFromFile();
                     return;
                 }
                 case 'n': {
-                    GotoXY(3, 6 + counter);
+                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
                     std::cout << "                                                                           ";
                     break;
                 }
@@ -671,11 +708,12 @@ void loadFromFile() { //загрузка
                         fieldPlayer[sh[i].y[j]][sh[i].x[j]] = aliveSh;
                     }
                 }
-                GotoXY(3, 6 + counter);
+                fin.close();
+                GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
                 setColor(LightGreen, Black);
-                std::cout << "Расстановка '" << menu[pointer] << "' успешно загружена.Начало игры...";
+                std::cout << "Расстановка '" << menu[pointer] << "' успешно загружена. Начало игры...";
                 setColor(White, Black);
-                GotoXY(3, 8 + counter);
+                GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
                 system("pause");
                 Sleep(1000);
                 gameCycle();

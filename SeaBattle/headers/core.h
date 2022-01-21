@@ -20,5 +20,5 @@ std::string createFolders();
 void progress(int sleeptime);
 void shipCountAnim(std::string str, int posY, int shipCounter);
 void gameCycle();
-int gameoverchecker();
+void gameoverchecker();
 #endif // !_CORE_H_
