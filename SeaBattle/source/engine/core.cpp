@@ -62,11 +62,20 @@ void humanPlayer()
     while (true)
     {
         do {
-            setColor(White, Black);
-            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
-            std::cout << "Координаты выстрела:                      ";
-            GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
-            std::cin >> x >> y;
+              m:setColor(White, Black);
+                GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
+                std::cout << "Координаты выстрела:                      ";
+                GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
+                std::cin >> x >> y;
+                if (y < 1 || y > 999 || x < 1 || x > 999) {
+                    std::cin.clear();
+                    std::cin.ignore(32767, '\n');
+                    setColor(LightRed, Black);
+                    GotoXY((width - 150) / 2 + 99, (height - 43) / 2 + 10 + 8);
+                    std::cout << "Ошибка! Некорректные данные.\n";
+                    Sleep(1000);
+                    goto m;
+                }
             x1 = x - '@';
             if (x1 > 10)
                 x1 = x1 - 32;
@@ -265,6 +274,7 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
     {
         while (shOnfire) //генерация направления для нового выстрела
         {
+
             direction = rand() % 4 + 1;
             if (direction == 1 && d1 && (field[yOld - dx1][xOld] != missed && field[yOld - dx1][xOld] != drownSh && field[yOld - dx1][xOld] != boarder))
             {
@@ -286,7 +296,6 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
                 x = xOld - dx4;
                 break;
             }
-            Sleep(1000);
         }
         if (field[y][x] != aliveSh) //не попал
         {
@@ -304,6 +313,7 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
         }
         else //попал
         {
+            Sleep(400);
             field[y][x] = drownSh;
             if (direction == 1 || direction == 3) //лок по х или у при попадании 
             {
@@ -328,7 +338,6 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
                 return;
         }
         showField(field);
-        Sleep(1000);
     }
     if (!shOnfire)
         aiPlayer(field);
@@ -342,6 +351,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     int x, y;
     if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
     {
+        Sleep(400);
         GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
         std::cout << "Ожидание хода компьютера...       ";
         shipOnfire(field);
@@ -360,6 +370,7 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         }
         if (field[y][x] == aliveSh) //если попал
         {
+            Sleep(400);
             field[y][x] = drownSh;
             xOld = x;
             yOld = y;
@@ -371,7 +382,6 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         }
         else //если не попал первым выстрелом
             field[y][x] = missed;
-        Sleep(10);
         showField(field);
     }
 }
@@ -441,7 +451,7 @@ void shipConstructor(char field[sz][szx]) {
             std::cout << "Введите размерность корабля:  ";
             choice = getch();
             if (choice == 0x1B) {
-                newGameMenu();
+                game = false;
                 return;
             }
             if (choice == 0x31 && counter1 > 0) { // проверка на нажатие кнопки и не достиг ли лимит кораблей
@@ -488,7 +498,7 @@ void shipConstructor(char field[sz][szx]) {
         {
             setColor(White, Black);
             GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
-            std::cout << "Enter x" << i << " and y" << i << " :                                ";
+            std::cout << "Введите х" << i+1 << " и y" << i+1 << " :                                ";
             GotoXY((width - 142) / 2 + 117, (height - 43) / 2 + 10 + 12 + i);
             std::cin >> x >> sh[currAmofShips - 1].y[i];
             if (x >= 65 && x <= 74)
@@ -501,9 +511,6 @@ void shipConstructor(char field[sz][szx]) {
             else if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail() || !trueship(i + 1)) { // проверка правильности ввода 
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
-
-                //GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22);
-               // std::cout << "                                                                       ";
                 showField(fieldPlayer);
                 setColor(LightRed, Black);
                 GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22+i);
@@ -511,10 +518,6 @@ void shipConstructor(char field[sz][szx]) {
                 GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
                 std::cout << "Ошибка! Некорректные данные.\n";
                 Sleep(1000);
-                //cleaning(8);
-                //setColor(Yellow, Black);
-                //GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 8 + 12);
-               // std::cout << "Введите координаты для " << choice << "-палубного корабля.";
                 GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
                 std::cout << "                                                               ";
                 i--;
@@ -796,11 +799,11 @@ void loadFromFile() { //загрузка
                     }
                 }
                 fin.close();
-                GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 5 + counter);
+                GotoXY((width - 54) / 2 + 36, (height - 12) / 2 + 13);
                 setColor(LightGreen, Black);
                 std::cout << "Расстановка '" << menu[pointer] << "' успешно загружена. Начало игры...";
                 setColor(White, Black);
-                GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 7 + counter);
+                GotoXY((width - 54) / 2 + 36, (height - 12) / 2 + 15);
                 system("pause");
                 Sleep(1000);
                 return;
@@ -995,10 +998,10 @@ void shipCountAnim(std::string str, int posY, int shipCounter) {
 void gameCycle() {
     if (game) {
         system("cls");
-        while (true)
+        while (game)
         {
-            humanPlayer();
             aiPlayer(fieldPlayer);
+            Sleep(1200);
         }
     }
     else
