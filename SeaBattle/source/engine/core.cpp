@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <fstream>  
 #include "core.h"
+#include <math.h>
 #include "GotoXY.h"
 #include <Lmcons.h>
 #include <filesystem>
@@ -114,7 +115,7 @@ void horOutput(int i, bool ifboarder, char field[sz][szx])
     {
         if (field[i][k] == boarder)
             setColor(LightBlue, LightBlue);
-        else if (field[i][k] == ocean || field[i][k] == aliveSh && player)
+        else if (field[i][k] == ocean || field[i][k] == aliveSh && player || field[i][k] == aroundSh)
             setColor(White, White);
         else if (field[i][k] == aliveSh)
             setColor(LightGreen, LightGreen);
@@ -374,10 +375,50 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
         showField(field);
     }
 }
+void shiparoundC(int shipNum, char field[sz][szx])
+{
+    for (int i = 0; i < sh[shipNum].length; i++)
+    {
+        for (int m = -1; m <= 1; m++)
+        {
+            for (int n = -1; n <= 1; n++)
+            {
+                if (field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != aliveSh && field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != boarder)
+                {
+                    field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] = aroundSh;
+                }
+            }
+        }
+    }
+}
+bool trueship(int curramofblocks)
+{
+    if (curramofblocks == 1)
+        return true;
+    int ok = 0;
+    bool paraleltoOX = false, paraleltoOY = false;
+    for (int i = 0; i < curramofblocks - 1; i++)
+    {
+        if ((sh[currAmofShips - 1].x[i] - sh[currAmofShips - 1].x[i + 1]) == 0 && abs(sh[currAmofShips - 1].y[i] - sh[currAmofShips - 1].y[i + 1]) == 1 && !paraleltoOX)
+        {
+            paraleltoOY = true;
+            ok++;
+        }
+        if ((sh[currAmofShips - 1].y[i] - sh[currAmofShips - 1].y[i + 1]) == 0 && abs(sh[currAmofShips - 1].x[i] - sh[currAmofShips - 1].x[i + 1]) == 1 && !paraleltoOY)
+        {
+            paraleltoOX = true;
+            ok++;
+        }
+    }
+    if (ok == curramofblocks - 1)
+        return true;
+    else
+        return false;
+}
 void shipConstructor(char field[sz][szx]) {
     char choice;
     int length = 0, counter1 = 4, counter2 = 3, counter3 = 2, counter4 = 1;
-    for (int counter = 0; counter < 1; counter++) {
+    for (int counter = 0; counter < 10; counter++) {
         system("cls");
         showField(fieldPlayer);
         WriteTitle(width, height, "construct");
@@ -400,7 +441,7 @@ void shipConstructor(char field[sz][szx]) {
             std::cout << "Введите размерность корабля:  ";
             choice = getch();
             if (choice == 0x1B) {
-                game = false;
+                newGameMenu();
                 return;
             }
             if (choice == 0x31 && counter1 > 0) { // проверка на нажатие кнопки и не достиг ли лимит кораблей
@@ -454,29 +495,45 @@ void shipConstructor(char field[sz][szx]) {
                 sh[currAmofShips - 1].x[i] = x - 64;
             else if (x >= 97 && x <= 106)
                 sh[currAmofShips - 1].x[i] = x - 96;
-            if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] == ocean) {
+            if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] == ocean && trueship(i + 1)) {
                 field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
             }
-            else if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail()) { // проверка правильности ввода 
+            else if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail() || !trueship(i + 1)) { // проверка правильности ввода 
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
 
-                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22);
-                std::cout << "                                                                       ";
+                //GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22);
+               // std::cout << "                                                                       ";
                 showField(fieldPlayer);
                 setColor(LightRed, Black);
+                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22+i);
+                std::cout << "                                                                       ";
                 GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
                 std::cout << "Ошибка! Некорректные данные.\n";
                 Sleep(1000);
-                cleaning(8);
-                goto m;
+                //cleaning(8);
+                //setColor(Yellow, Black);
+                //GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 8 + 12);
+               // std::cout << "Введите координаты для " << choice << "-палубного корабля.";
+                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
+                std::cout << "                                                               ";
+                i--;
             }
         }
         sh[currAmofShips - 1].length = length;
         sh[currAmofShips - 1].hp = length;
+        shiparoundC(currAmofShips - 1, fieldPlayer);
     }
     showField(fieldPlayer);
     cleaning(22);
+    for (int i = 0; i < sz; i++)
+    {
+        for (int k = 0; k < sz; k++)
+        {
+            if (fieldPlayer[i][k] == aroundSh)
+                fieldPlayer[i][k] = ocean;
+        }
+    }
     GotoXY(width / 2 + 28, height / 2);
     std::cout << "Сохранить расстановку? y\\n";
     choice = getch();
