@@ -123,5 +123,20 @@ void WriteTitle(int width, int height, std::string title) {
         GotoXY((width - 34) / 2, (height - 11) / 2 + 10 - 3);
         std::cout << "█  █ ████ ████ ███ █   █ █  █ █  █";
     }
+    if (title == "title")
+    {
+        GotoXY(width / 2 - 26, (height - 5) / 4);
+        std::cout << "                                ██               ██ ";
+        GotoXY(width / 2 - 26, (height - 6) / 4 + 1);
+        std::cout << "█   █ ████ ████ ████ █  █ ████ █  █   ████ ████ █  █";
+        GotoXY(width / 2 - 26, (height - 6) / 4 + 2);
+        std::cout << "██ ██ █  █ █  █ █  █ █ █  █  █ █  █   █    █  █ █  █";
+        GotoXY(width / 2 - 26, (height - 6) / 4 + 3);
+        std::cout << "█ █ █ █  █ ████ █    ██   █  █ █ ██   ████ █  █ █ ██";
+        GotoXY(width / 2 - 26, (height - 6) / 4 + 4);
+        std::cout << "█   █ █  █ █    █  █ █ █  █  █ ██ █   █  █ █  █ ██ █";
+        GotoXY(width / 2 - 26, (height - 6) / 4 + 5);
+        std::cout << "█   █ ████ █    ████ █  █ ████ █  █   ████ ████ █  █";
+    }
 }
 

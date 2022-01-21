@@ -2,6 +2,8 @@
 #include <windows.h>
 #include "newGameMenu.h"
 #include "GotoXY.h"
+#include "titles.h"
+#include <conio.h>
 
 BOOL ShowConsoleCursor(BOOL bShow)
 {
@@ -17,7 +19,26 @@ BOOL ShowConsoleCursor(BOOL bShow)
         return FALSE;
     return TRUE;
 }
+void aboutgame(int height, int width)
+{
+    system("cls");
+    GotoXY((width - 70) / 2, (height - 5) / 2);
+    std::cout << "      «Морской бой» — игра для двух участников, в которой игроки";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 1);
+    std::cout << "по очереди называют координаты на неизвестной им карте соперника.";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 2);
+    std::cout << "Если у соперника по этим координатам имеется корабль(координаты заняты),";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 3);
+    std::cout << "то корабль или его часть «топится», а попавший получает право сделать ";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 4);
+    std::cout << "ещё один ход. Цель игрока — первым потопить все корабли противника.";
+    GotoXY((width - 20) / 2, (height - 5) / 2 + 6);
+    setColor(LightRed, Black);
+    std::cout << " >> Вернуться в меню";
+    setColor(White, Black);
+    getch();
 
+}
 int menu() {
     ShowConsoleCursor(FALSE);
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -25,15 +46,16 @@ int menu() {
     GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
     int height = scrBufferInfo.srWindow.Bottom - scrBufferInfo.srWindow.Top + 1;
     int width = scrBufferInfo.srWindow.Right - scrBufferInfo.srWindow.Left + 1;
-    std::string Menu[3] = { " Создать новую игру\n", " Как играть\n", " Выйти\n" };
+    std::string Menu[3] = { " Создать новую игру\n", " О игре\n", " Выйти\n" };
     int pointer = 0;
 
     while (true)
     {
         int m = 0;
         system("cls");
-        GotoXY((width - 37) / 2 + 13, (height - 6) / 2 + m++);
-        std::cout << "Морской бой\n";
+        WriteTitle(width, height, "title");
+        GotoXY((width - 12) / 2 - 1, (height - 6) / 2 + m++);
+        std::cout << "Главное меню\n";
         GotoXY((width - 37) / 2, (height - 6) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╔═══════════════════════════════════╗" << std::endl;
@@ -90,8 +112,8 @@ int menu() {
                     break;
                 }
                 case 1: {
-                    std::cout << "\nComing soon..." << std::endl;
-                    return 0;
+                    aboutgame(height, width);
+                    break;
                 }
                 case 2: {
                     return 0;
