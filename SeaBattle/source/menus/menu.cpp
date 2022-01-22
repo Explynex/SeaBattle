@@ -22,21 +22,45 @@ BOOL ShowConsoleCursor(BOOL bShow)
 void aboutgame(int height, int width)
 {
     system("cls");
-    GotoXY((width - 70) / 2, (height - 5) / 2);
-    std::cout << "      «Морской бой» — игра для двух участников, в которой игроки";
-    GotoXY((width - 70) / 2, (height - 5) / 2 + 1);
-    std::cout << "по очереди называют координаты на неизвестной им карте соперника.";
-    GotoXY((width - 70) / 2, (height - 5) / 2 + 2);
-    std::cout << "Если у соперника по этим координатам имеется корабль(координаты заняты),";
-    GotoXY((width - 70) / 2, (height - 5) / 2 + 3);
-    std::cout << "то корабль или его часть «топится», а попавший получает право сделать ";
-    GotoXY((width - 70) / 2, (height - 5) / 2 + 4);
-    std::cout << "ещё один ход. Цель игрока — первым потопить все корабли противника.";
-    GotoXY((width - 20) / 2, (height - 5) / 2 + 6);
-    setColor(LightRed, Black);
-    std::cout << " >> Вернуться в меню";
+    setColor(Yellow, Black);
+    GotoXY((width - 70) / 2+30, (height - 5) / 2 - 7);
+    std::cout << "О игре.";
     setColor(White, Black);
-    getch();
+    GotoXY((width - 70) / 2, (height - 5) / 2-6);
+    std::cout << "      «Морской бой» — игра для двух участников, в которой игроки";
+    GotoXY((width - 70) / 2, (height - 5) / 2 -5);
+    std::cout << "по очереди называют координаты на неизвестной им карте соперника.";
+    GotoXY((width - 70) / 2, (height - 5) / 2 -4);
+    std::cout << "Если у соперника по этим координатам имеется корабль(координаты заняты),";
+    GotoXY((width - 70) / 2, (height - 5) / 2 -3);
+    std::cout << "то корабль или его часть «топится», а попавший получает право сделать ";
+    GotoXY((width - 70) / 2, (height - 5) / 2 -2);
+    std::cout << "ещё один ход. Цель игрока — первым потопить все корабли противника.";
+    GotoXY((width - 70) / 2+32, (height - 5) / 2 );
+    setColor(Yellow, Black);
+    std::cout << "FAQ";
+    setColor(White, Black);
+    GotoXY((width - 70) / 2, (height - 5) / 2 +1);
+    std::cout << " • Как добавлять корабли? - Начать новую игру и выбрать: «Расставить вручную».";
+    GotoXY((width - 70) / 2+3, (height - 5) / 2 +2);
+    std::cout << "После нажатия кнопки 1-4 нужно ввести координаты. Пример: «1» «J2».";
+    GotoXY((width - 70) / 2, (height - 5) / 2 +3);
+    std::cout << " • Как сохранить расстановку? - Расставить вручную или сгенерировать автоматически.";
+    GotoXY((width - 70) / 2+3, (height - 5) / 2 +4);
+    std::cout << "Нажать кнопку «y» для сохранения или «n» чтобы пропустить момент сохранения.";
+    GotoXY((width - 70) / 2, (height - 5) / 2 +5);
+    std::cout << " • Как загрузить расстановку? - Начать новую игру и выбрать: «Загрузить расстановку».";
+    GotoXY((width - 70) / 2+3, (height - 5) / 2+6);
+    std::cout << "Листать сохранения на «W,S», для загрузки - «Enter», для удаления - «Del» + «y\\n».";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 7);
+    std::cout << " • Для возврата в меню из «Конструктора», »Загрузчика» и «Генератора расстановок» - «Esc».";
+    GotoXY((width - 70) / 2, (height - 5) / 2 + 8);
+    std::cout << " • Для возврата в меню во время игры стоит написать вместо координат «00» ";
+    setColor(LightRed, Black);
+    GotoXY((width - 20) / 2 , (height - 5) / 2 + 10);
+    std::cout << " >> Вернуться в меню";
+    setColor(Black, Black);
+    system("pause");
 
 }
 int menu() {
@@ -53,14 +77,15 @@ int menu() {
     {
         int m = 0;
         system("cls");
-        WriteTitle(width, height, "title");
-        GotoXY((width - 12) / 2 - 1, (height - 6) / 2 + m++);
-        std::cout << "Главное меню\n";
         GotoXY((width - 37) / 2, (height - 6) / 2 + m++);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
         std::cout << "╔═══════════════════════════════════╗" << std::endl;
         for (int i = 0; i < 3; ++i)
         {
+            setColor(White, Black);
+            WriteTitle(width, height, "title");
+            GotoXY((width - 12) / 2 - 1, (height - 6) / 2 -1);
+            std::cout << "Главное меню\n";
             if (i == pointer)
             {
                 GotoXY((width - 37) / 2, (height - 6) / 2 + m + i);
