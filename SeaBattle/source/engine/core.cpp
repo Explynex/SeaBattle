@@ -37,8 +37,11 @@ void gameoverchecker()
         system("cls");
         setColor(White, Black);
         WriteTitle(width, height, "aiwin");
-        GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+        GotoXY((width - 34) / 2 + 3, (height - 11) / 2 + 10);
+        std::cout << "Нажмите любую кнопку для продолжения ...";
+        setColor(Black, Black);
         system("pause");
+        setColor(White, Black);
         game = false;
     }
 
@@ -47,8 +50,11 @@ void gameoverchecker()
         system("cls");
         setColor(White, Black);
         WriteTitle(width, height, "playerwin");
-        GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+        GotoXY((width - 34) / 2 + 3, (height - 11) / 2 + 10);
+        std::cout << "Нажмите любую кнопку для продолжения ...";
+        setColor(Black, Black);
         system("pause");
+        setColor(White, Black);
         game = false;
     }
 }
@@ -67,6 +73,10 @@ void humanPlayer()
                 std::cout << "Координаты выстрела:                      ";
                 GotoXY((width - 142) / 2 + 116, (height - 43) / 2 + 12 + 6);
                 std::cin >> x >> y;
+                if (x == '0' || y == '0') {
+                    game = false;
+                    return;
+                }
                 if (y < 1 || y > 999 || x < 1 || x > 999) {
                     std::cin.clear();
                     std::cin.ignore(32767, '\n');
@@ -540,6 +550,10 @@ void shipConstructor(char field[sz][szx]) {
     GotoXY(width / 2 + 28, height / 2);
     std::cout << "Сохранить расстановку? y\\n";
     choice = getch();
+    if (choice == 0x1B) {
+        game = false;
+        return;
+    }
     switch (choice) {
     case'y':
         saveInFile();
@@ -759,8 +773,11 @@ void loadFromFile() { //загрузка
                     setColor(LightGreen, Black);
                     std::cout << "Расстановка '" << menu[pointer] << "' успешно удалена.                     ";
                     setColor(White, Black);
-                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 9 + counter);
+                    GotoXY((width - 54) / 2 , (height - 4 - counter) / 2 + 9 + counter);
+                    std::cout << "Нажмите любую кнопку для продолжения ...";
+                    setColor(Black, Black);
                     system("pause");
+                    setColor(White, Black);
                     loadFromFile();
                     return;
                 }
@@ -770,8 +787,11 @@ void loadFromFile() { //загрузка
                     setColor(LightGreen, Black);
                     std::cout << "Расстановка '" << menu[pointer] << "' успешно удалена.                     ";
                     setColor(White, Black);
-                    GotoXY((width - 54) / 2 + 2, (height - 4 - counter) / 2 + 9 + counter);
+                    GotoXY((width - 54) / 2 , (height - 4 - counter) / 2 + 9 + counter);
+                    std::cout << "Нажмите любую кнопку для продолжения ...";
+                    setColor(Black, Black);
                     system("pause");
+                    setColor(White, Black);
                     loadFromFile();
                     return;
                 }
@@ -804,7 +824,10 @@ void loadFromFile() { //загрузка
                 std::cout << "Расстановка '" << menu[pointer] << "' успешно загружена. Начало игры...";
                 setColor(White, Black);
                 GotoXY((width - 54) / 2 + 36, (height - 12) / 2 + 15);
+                std::cout << "Нажмите любую кнопку для продолжения ...";
+                setColor(Black, Black);
                 system("pause");
+                setColor(White, Black);
                 Sleep(1000);
                 return;
             }
@@ -973,8 +996,11 @@ void progress(int sleeptime) {
         draw_progress_bar(i);
         Sleep(sleeptime);
     }
-    GotoXY((width - 32) / 2, (height - 7) / 2 + 10);
+    GotoXY((width - 32) / 2-2, (height - 7) / 2 + 10);
+    std::cout << "Нажмите любую кнопку для продолжения ...";
+    setColor(Black, Black);
     system("pause");
+    setColor(White, Black);
 }
 
 void shipCountAnim(std::string str, int posY, int shipCounter) {
@@ -1000,6 +1026,8 @@ void gameCycle() {
         system("cls");
         while (game)
         {
+            humanPlayer();
+            Sleep(1200);
             aiPlayer(fieldPlayer);
             Sleep(1200);
         }
@@ -1039,6 +1067,10 @@ void AI(std::string mode)
         GotoXY(width / 2 + 28, height / 2);
         std::cout << "Сохранить расстановку? y\\n";
         choice = getch();
+        if (choice == 0x1B) {
+            game = false;
+            return;
+        }
         switch (choice) {
         case'y':
             saveInFile();
@@ -1051,5 +1083,8 @@ void AI(std::string mode)
     gameCycle();
     system("cls");
     GotoXY((width - 34) / 2 + 5, (height - 11) / 2 + 10);
+    std::cout << "Нажмите любую кнопку для продолжения ...";
+    setColor(Black, Black);
     system("pause");
+    setColor(White, Black);
 }
