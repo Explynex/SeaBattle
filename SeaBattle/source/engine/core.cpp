@@ -29,7 +29,8 @@ public:
 };
 ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
-
+COORD genPosArr[100],shootPosArr[100];
+int genPosAm = 100, shootPosAm = 100;
 void gameoverchecker()
 {
     if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0)
@@ -234,6 +235,8 @@ void shipDrown(int shipNum, char field[sz][szx]) { //функция затопл
                 if (field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != drownSh && field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != boarder)
                 {
                     field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] = missed;
+                    if (!player)
+                    shootPosAm = freePosCrdDeleter(sh[shipNum].x[i] + n, sh[shipNum].y[i] + m, shootPosArr, shootPosAm);
                 }
             }
         }
@@ -310,6 +313,7 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
         if (field[y][x] != aliveSh) //не попал
         {
             field[y][x] = missed;
+            shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
             if (direction == 1)
                 d1 = false;
             if (direction == 2)
@@ -325,6 +329,8 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
         {
             Sleep(400);
             field[y][x] = drownSh;
+            shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
+            //
             if (direction == 1 || direction == 3) //лок по х или у при попадании 
             {
                 if (direction == 1)
@@ -373,10 +379,14 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
             std::cout << "Ожидание хода компьютера...       ";
             cleaning(8);
-            x = rand() % (sz - 1) + 1;
-            y = rand() % (sz - 1) + 1;
+            int idx = rand() % shootPosAm;
+            x = shootPosArr[idx].X;
+            y = shootPosArr[idx].Y;
             if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
+            {
+                shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
                 break;
+            }
         }
         if (field[y][x] == aliveSh) //если попал
         {
@@ -877,10 +887,22 @@ void shiparound(int shipNum, char genField[sz][szx])
                 if (genField[shgen[shipNum].y[i] + m][shgen[shipNum].x[i] + n] != aliveSh && genField[shgen[shipNum].y[i] + m][shgen[shipNum].x[i] + n] != boarder)
                 {
                     genField[shgen[shipNum].y[i] + m][shgen[shipNum].x[i] + n] = aroundSh;
+                    genPosAm = freePosCrdDeleter(shgen[shipNum].x[i] + n, shgen[shipNum].y[i] + m, genPosArr, genPosAm);
                 }
             }
         }
     }
+}
+void testgen(char genField[sz][szx]) {
+    for (int i = 0; i < sz; i++)
+    {
+        for (int k = 0; k < szx; k++)
+        {
+            std::cout<<genField[i][k];
+        }
+        std::cout << "\n";
+    }
+
 }
 void generator(int shipNum, char genField[sz][szx])
 {
@@ -890,14 +912,16 @@ void generator(int shipNum, char genField[sz][szx])
     {
         while (i == 0)
         {
-            x = rand() % (sz - 1) + 1;
-            y = rand() % (sz - 1) + 1;
-            if (genField[y][x] != aroundSh && genField[y][x] != aliveSh && genField[y][x] != boarder)
+            int idx = rand() % genPosAm;
+            xOld = genPosArr[idx].X;
+            yOld = genPosArr[idx].Y;
+            x = genPosArr[idx].X;
+            y = genPosArr[idx].Y;
+            if (genField[yOld][xOld] != aroundSh && genField[yOld][xOld] != aliveSh && genField[yOld][xOld] != boarder)
             {
-                xOld = x;
-                yOld = y;
-                genField[y][x] = aliveSh;
-                break;
+                    genField[y][x] = aliveSh;
+                    genPosAm = freePosCrdDeleter(xOld, yOld, genPosArr, genPosAm);
+                    break;
             }
         }
         if (i > 0)
@@ -941,7 +965,7 @@ void generator(int shipNum, char genField[sz][szx])
             else
             {
                 genField[y][x] = aliveSh;
-
+                genPosAm = freePosCrdDeleter(x, y, genPosArr, genPosAm);
                 if (direction == 1 || direction == 3)
                 {
                     if (direction == 1)
@@ -964,23 +988,28 @@ void generator(int shipNum, char genField[sz][szx])
         }
         shgen[shipNum].x[i] = x;
         shgen[shipNum].y[i] = y;
-        // cout<<shgen[shipNum].x[i]<<" "<<shgen[shipNum].y[i]<<" "<<i+1<<" dx^"<<dx1<<dx2<<dx3<<dx4<<endl;
+        //std::cout<<shgen[shipNum].x[i]<<" "<<shgen[shipNum].y[i]<<" "<<i+1<<" dx^"<<dx1<<dx2<<dx3<<dx4<<std::endl;
         if (i + 1 == shgen[shipNum].length)
         {
             shiparound(shipNum, genField);
         }
+        //testgen(genField);
+        //freePosCrdShow(genPosArr, genPosAm);
     }
 }
 void randomgen(std::string whose, char genField[sz][szx])
 {
     int curSh = 0;
     fieldBoarder(genField);
+    freePosCrdFiller(genPosArr);
+    genPosAm = 100;
     for (int i = 4; i > 0; i--)
     {
         for (int k = 0; k < 5 - i; k++)
         {
             shgen[curSh].length = i;
             generator(curSh, genField);
+            //testgen(genField);
             curSh++;
         }
     }
@@ -1024,6 +1053,8 @@ void shipCountAnim(std::string str, int posY, int shipCounter) {
 void gameCycle() {
     if (game) {
         system("cls");
+        shootPosAm = 100;
+        freePosCrdFiller(shootPosArr);
         while (game)
         {
             humanPlayer();
@@ -1087,4 +1118,43 @@ void AI(std::string mode)
     setColor(Black, Black);
     system("pause");
     setColor(White, Black);
+}
+void freePosCrdShow(COORD* freePosCrdArr, int freePosCrdAm)
+{
+    for (int i = 0; i < freePosCrdAm; i++)
+    {
+
+        std::cout << "\n List : " << freePosCrdArr[i].X << "\t" << freePosCrdArr[i].Y;
+
+    }
+}
+void freePosCrdFiller(COORD* freePosCrdArr)
+{
+    for (int i = 0; i < sz-2; i++)
+    {
+        for (int k = 0; k < szx-2; k++)
+        {
+            freePosCrdArr[k + i * 10].X = k+1;
+            freePosCrdArr[k + i * 10].Y = i+1;
+        }
+    }
+}
+int freePosCrdDeleter(int x, int y, COORD* freePosCrdArr, int freePosCrdAm)
+{
+    int delindex;
+    for (int i = 0; i < freePosCrdAm; i++)
+    {
+        if (freePosCrdArr[i].X == x && freePosCrdArr[i].Y == y)
+        {
+            delindex = i;
+            for (int k = delindex; k < freePosCrdAm; k++)
+            {
+                freePosCrdArr[k].X = freePosCrdArr[k + 1].X;
+                freePosCrdArr[k].Y = freePosCrdArr[k + 1].Y;
+            }
+            return --freePosCrdAm;
+        }
+    }
+    return freePosCrdAm;
+
 }

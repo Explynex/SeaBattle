@@ -21,4 +21,7 @@ void progress(int sleeptime);
 void shipCountAnim(std::string str, int posY, int shipCounter);
 void gameCycle();
 void gameoverchecker();
+void freePosCrdFiller(COORD* freePosCrdArr);
+int freePosCrdDeleter(int x, int y, COORD* freePosCrdArr, int freePosCrdAm);
+void freePosCrdShow(COORD* freePosCrdArr, int freePosCrdAm);
 #endif // !_CORE_H_
