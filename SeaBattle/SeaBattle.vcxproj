@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{d3be79f9-5b0a-4a71-8f51-9de2da123865}</ProjectGuid>
     <RootNamespace>SeaBattle</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -43,7 +43,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -143,19 +143,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\engine\GotoXY.cpp" />
-    <ClCompile Include="source\engine\windowSize.cpp" />
-    <ClCompile Include="source\menus\newGameMenu.cpp" />
-    <ClCompile Include="source\engine\core.cpp" />
-    <ClCompile Include="source\menus\menu.cpp" />
-    <ClCompile Include="source\SeaBattle.cpp" />
+    <ClCompile Include="source\core.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\graphic\menu.cpp" />
+    <ClCompile Include="source\graphic\titles.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DevAttribute\devattribute.h" />
     <ClInclude Include="headers\core.h" />
-    <ClInclude Include="headers\GotoXY.h" />
-    <ClInclude Include="headers\menu.h" />
-    <ClInclude Include="headers\newGameMenu.h" />
-    <ClInclude Include="headers\windowSize.h" />
+    <ClInclude Include="headers\output.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="DevAttribute\devattribute.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

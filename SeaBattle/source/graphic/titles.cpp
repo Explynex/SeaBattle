@@ -1,32 +1,17 @@
-#include <iostream>
-#include "GotoXY.h"
-#include "titles.h"
+﻿#include "output.h"
 
-void WriteTitle(int width, int height, std::string title) {
-	if (title == "construct") {
-		GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + 1);
-        std::cout << "█  █ ████ █  █ ████ ███ ████ █ █ █  █ ███ ████ ████";
-        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + 2);
-        std::cout << "█ █  █  █ █  █ █  █  █  █  █ █ █ █ █   █  █  █ █  █";
-        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + 3);
-        std::cout << "██   █  █ ████ █     █  ████ ███ ██    █  █  █ ████";
-        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + 4);
-        std::cout << "█ █  █  █ █  █ █  █  █  █      █ █ █   █  █  █ █";
-        GotoXY((width - 142) / 2 + 94, (height - 43) / 2 + 5);
-        std::cout << "█  █ ████ █  █ ████  █  █    ███ █  █  █  ████ █";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 7);
-        std::cout << "	   		           ▀▀";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 8);
-        std::cout << "█  █ ████ ████ ████ ████   ██ ███ █  █";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 9);
-        std::cout << "█ █  █  █ █  █ █  █ █     █ █ █   █  █";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10);
-        std::cout << "██   █  █ ████ ████ ████ █  █ ███ █ ██";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 11);
-        std::cout << "█ █  █  █ █    █  █ █  █ █  █ █   ██ █";
-        GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 12);
-        std::cout << "█  █ ████ █    █  █ ████ █  █ ███ █  █";
-	}
+void writeTitle(short width, short height, std::string title) {
+    if (title == "seabattle") {
+        GotoXY(width, height++, " ██████╗███████╗ █████╗   ██████╗  █████╗ ████████╗████████╗██╗     ███████╗");
+        GotoXY(width, height++, "██╔════╝██╔════╝██╔══██╗  ██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║     ██╔════╝");
+        GotoXY(width, height++, "██║     ██║════╝██╔══██║  ██╔══██║██╔══██║   ██║      ██║   ██║     ██║════╝");
+        GotoXY(width, height++, "╚█████╗ █████╗  ███████║  ██████╦╝███████║   ██║      ██║   ██║     █████╗  ");
+        GotoXY(width, height++, " ╚═══██╗██╔══╝  ██╔══██║  ██╔══██╗██╔══██║   ██║      ██║   ██║     ██╔══╝  ");
+        GotoXY(width, height++, "██████╔╝███████╗██║  ██║  ██████╦╝██║  ██║   ██║      ██║   ███████╗███████╗");
+        GotoXY(width, height++, "╚═════╝ ╚══════╝╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝╚══════╝");
+        std::cout << std::endl;
+        return;
+    }
     if (title == "aimove") {
         GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 1);
         std::cout << "                    ██ ██ ████  ███                  ";
