@@ -819,12 +819,13 @@ void testgen(char genField[sz][szx]) {
     }
 
 }
-void generator(int shipNum, char genField[sz][szx])
+int generator(std::string whose,int shipNum, char genField[sz][szx])
 {
-    int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld;
+    int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld,lagfinder=0;
     bool d1 = true, d2 = true, d3 = true, d4 = true;
     for (int i = 0; i < shgen[shipNum].length; i++)
     {
+        //testgen(genField);
         while (i == 0)
         {
             int idx = rand() % genPosAm;
@@ -841,29 +842,38 @@ void generator(int shipNum, char genField[sz][szx])
         }
         if (i > 0)
         {
+            lagfinder = 0;
             while (true)
             {
+                lagfinder++;
                 direction = rand() % 4 + 1;
                 if (direction == 1 && d1 && (genField[yOld - dx1][xOld] != aroundSh && genField[yOld - dx1][xOld] != boarder))
                 {
                     y = yOld - dx1;
                     break;
                 }
-                if (direction == 2 && d2 && (genField[yOld][xOld + dx2] != aroundSh && genField[yOld][xOld + dx2] != boarder))
+                else if (direction == 2 && d2 && (genField[yOld][xOld + dx2] != aroundSh && genField[yOld][xOld + dx2] != boarder))
                 {
                     x = xOld + dx2;
                     break;
                 }
-                if (direction == 3 && d3 && (genField[yOld + dx3][xOld] != aroundSh && genField[yOld + dx3][xOld] != boarder))
+                else if (direction == 3 && d3 && (genField[yOld + dx3][xOld] != aroundSh && genField[yOld + dx3][xOld] != boarder))
                 {
                     y = yOld + dx3;
                     break;
                 }
-                if (direction == 4 && d4 && (genField[yOld][xOld - dx4] != aroundSh && genField[yOld][xOld - dx4] != boarder))
+                else if (direction == 4 && d4 && (genField[yOld][xOld - dx4] != aroundSh && genField[yOld][xOld - dx4] != boarder))
                 {
                     x = xOld - dx4;
                     break;
                 }
+                if(lagfinder>=500)
+                {
+                    //system("pause");
+                    randomgen(whose, genField);
+                    return -1;
+                }
+
             }
             if (genField[y][x] != ocean)
             {
@@ -911,6 +921,7 @@ void generator(int shipNum, char genField[sz][szx])
         //testgen(genField);
         //freePosCrdShow(genPosArr, genPosAm);
     }
+    return 0;
 }
 void randomgen(std::string whose, char genField[sz][szx])
 {
@@ -923,7 +934,10 @@ void randomgen(std::string whose, char genField[sz][szx])
         for (int k = 0; k < 5 - i; k++)
         {
             shgen[curSh].length = i;
-            generator(curSh, genField);
+            if (generator(whose, curSh, genField) == -1)
+            {
+                return;
+            }
             //testgen(genField);
             curSh++;
         }
