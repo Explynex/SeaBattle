@@ -150,38 +150,16 @@ void setConsoleNoSelection(
     BOOL status
 );
 
-BOOL regIsBoot(
-    HKEY hkey,
-    const char* subkey
-);
-
-BOOL addToReg(
-    HKEY hkey,
-    const char* valueName
-);
-
-BOOL delFromReg(
-    HKEY hkey,
-    const char* valueName
-);
 
 void consoleResize(
     BOOL status
 );
 
-int fact(
-    int val
-);
+
 
 bool removeLineFromFile(
     std::string filename,
     int index
-);
-
-BOOL checkPrivilege(
-    HANDLE hToken,
-    LPCTSTR lpszPrivilege,
-    BOOL bEnablePrivilege
 );
 
 LONG calc_percentof64(
@@ -220,27 +198,6 @@ std::string printFilter(
     int maxDig = INT_MAX
 );
 
-void setConsoleTrayIcon(
-    const wchar_t* trayInfo,
-    LPCWSTR pathIcon,
-    WNDPROC msgCallback,
-    UINT flags = NIF_MESSAGE | NIF_ICON | NIF_TIP
-);
-
-
-namespace memory {
-
-    BOOL _d_memoryUtil(
-        _SYSTEM_INFORMATION_CLASS sysInfo,
-        _SYSTEM_MEMORY_LIST_COMMAND command
-    );
-    BOOL _d_sysCacheClean();
-    BOOL _d_quickClean();
-    BOOL _d_standbyListNoPriority();
-    BOOL _d_standbyListClean();
-    BOOL _d_sysCacheClean();
-
-}
 
 //
 // Classes
@@ -282,22 +239,24 @@ public:
             return username;
         }
     }
-    std::vector < std::string> fileNameList(char only_names = 'n', std::string path_to_dir = "auto") {
+std::vector < std::string> fileNameList(bool only_names = 0, std::string path_to_dir = "auto", std::string extension = "") {
         if (path_to_dir == "auto") path_to_dir = getPath("path");
         if (std::filesystem::is_directory(path_to_dir)) {
             std::vector < std::string> file_names;
-            int counter = 0;
+            int counter = 0,extLen = extension.length();
             for (const auto& entry : std::filesystem::directory_iterator(path_to_dir))
                 if (entry.is_regular_file()) {
                     file_names.push_back(std::filesystem::absolute(entry.path()).string());
-                    if (only_names == 'y') {
+                    if (only_names == 1) {
                         file_names[counter].erase(0, path_to_dir.length());
+                        if (extension != "") file_names[counter].erase(file_names[counter].length() - extLen, extLen);
                         counter++;
                     }
                 }
             return file_names;
         }
     }
+
     void fileRename(std::string old_name, std::string new_name, std::string path_to_dir = "auto") {
         std::filesystem::path p;
         if (path_to_dir == "auto") p = std::filesystem::current_path();

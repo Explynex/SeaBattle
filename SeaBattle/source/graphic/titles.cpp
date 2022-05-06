@@ -1,6 +1,7 @@
 ﻿#include "output.h"
 
 void writeTitle(short width, short height, std::string title) {
+    setColor(LIGHTCYAN, BLACK);
     if (title == "seabattle") {
         GotoXY(width, height++, " ██████╗███████╗ █████╗   ██████╗  █████╗ ████████╗████████╗██╗     ███████╗");
         GotoXY(width, height++, "██╔════╝██╔════╝██╔══██╗  ██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║     ██╔════╝");
@@ -9,60 +10,46 @@ void writeTitle(short width, short height, std::string title) {
         GotoXY(width, height++, " ╚═══██╗██╔══╝  ██╔══██║  ██╔══██╗██╔══██║   ██║      ██║   ██║     ██╔══╝  ");
         GotoXY(width, height++, "██████╔╝███████╗██║  ██║  ██████╦╝██║  ██║   ██║      ██║   ███████╗███████╗");
         GotoXY(width, height++, "╚═════╝ ╚══════╝╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝╚══════╝");
+        setColor(WHITE, BLACK);
         std::cout << std::endl;
         return;
     }
     if (title == "aimove") {
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 1);
-        std::cout << "                    ██ ██ ████  ███                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 2);
-        std::cout << "                     ███  █  █  █ █                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 3);
-        std::cout << "                      █   █  █  █ █                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 4);
-        std::cout << "                     ███  █  █ █████                 ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 5);
-        std::cout << "                    ██ ██ ████ █   █                 ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 6);
-        std::cout << "                                                     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 7);
-        std::cout << "█  █ ████ █   █ ████ █    █  ██  ███ ███ ████ ████     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 8);
-        std::cout << "█ █  █  █ ██ ██ █  █ █    █ █  █  █  █   █  █ █  █     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 9);
-        std::cout << "██   █  █ █ █ █ █  █ ████ ████ █  █  ███ ████ ████     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 10);
-        std::cout << "█ █  █  █ █   █ █  █ █  █ █ █  █  █  █   █    █  █     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 11);
-        std::cout << "█  █ ████ █   █ █  █ ████ █  ██   █  ███ █    █  █     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 12);
-        std::cout << "                                                         ";
+        cleaning((width - 142) / 2 + 93, (height - 43) / 2 + 1, 61, 13);
+        setColor(LIGHTCYAN, BLACK);
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 1,"██████╗  █████╗ ████████╗██╗ ██████╗");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 2,"██╔══██╗██╔══██╗╚══██╔══╝╚█║██╔════╝");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 3,"██████╦╝██║  ██║   ██║    ╚╝╚█████╗ ");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 4,"██╔══██╗██║  ██║   ██║       ╚═══██╗");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 5,"██████╦╝╚█████╔╝   ██║      ██████╔╝");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 6,"╚═════╝  ╚════╝    ╚═╝      ╚═════╝ ");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 8,"████████╗██╗   ██╗██████╗ ███╗  ██╗");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 9,"╚══██╔══╝██║   ██║██╔══██╗████╗ ██║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 10,"   ██║   ██║   ██║██████╔╝██╔██╗██║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 11,"   ██║   ██║   ██║██╔══██╗██║╚████║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 12,"   ██║   ╚██████╔╝██║  ██║██║ ╚███║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 13,"   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚══╝");
+        setColor(WHITE, BLACK);
+        std::cout << std::endl;
+        return;
     }
     if (title == "playermove") {
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 1);
-        std::cout << "                    ██ ██ ████  ███                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 2);
-        std::cout << "                     ███  █  █  █ █                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 3);
-        std::cout << "                      █   █  █  █ █                  ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 4);
-        std::cout << "                     ███  █  █ █████                 ";
-        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 5);
-        std::cout << "                    ██ ██ ████ █   █                 ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 6);
-        std::cout << "                                                     ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 7);
-        std::cout << "         █  █ ███ ████ ████ █  █ ████                         ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 8);
-        std::cout << "         █  █ █   █  █ █  █ █ █  █  █                    ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 9);
-        std::cout << "         █ ██ █   ████ █  █ ██   ████                    ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 10);
-        std::cout << "         ██ █ █   █    █  █ █ █  █  █                         ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 11);
-        std::cout << "         █  █ █   █    ████ █  █ █  █                    ";
-        GotoXY((width - 142) / 2 + 98, (height - 43) / 2 + 12);
-        std::cout << "                                                         ";
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 1,"██████╗ ██╗      █████╗ ██╗   ██╗███████╗██████╗ ██╗ ██████╗");
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 2,"██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗╚█║██╔════╝");
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 3,"██████╔╝██║     ███████║ ╚████╔╝ █████╗  ██████╔╝ ╚╝╚█████╗");
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 4,"██╔═══╝ ██║     ██╔══██║  ╚██╔╝  ██╔══╝  ██╔══██╗    ╚═══██╗");
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 5,"██║     ███████╗██║  ██║   ██║   ███████╗██║  ██║   ██████╔╝");
+        GotoXY((width - 142) / 2 + 93, (height - 43) / 2 + 6,"╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═════╝");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 8,"████████╗██╗   ██╗██████╗ ███╗  ██╗");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 9,"╚══██╔══╝██║   ██║██╔══██╗████╗ ██║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 10,"   ██║   ██║   ██║██████╔╝██╔██╗██║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 11,"   ██║   ██║   ██║██╔══██╗██║╚████║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 12,"   ██║   ╚██████╔╝██║  ██║██║ ╚███║");
+        GotoXY((width - 142) / 2 + 104, (height - 43) / 2 + 13,"   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚══╝");
+        setColor(WHITE, BLACK);
+        std::cout << std::endl;
+        return;
+
     }
     if (title == "aiwin") {
         GotoXY((width - 45) / 2, (height - 11) / 2 - 3);

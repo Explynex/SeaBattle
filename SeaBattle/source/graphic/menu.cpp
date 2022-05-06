@@ -54,7 +54,6 @@ void mainMenu() {
     while (true) {
         system("cls");
         short wdh = width / 2 - 37, hgh = height / 2 - 14;
-        setColor(LIGHTCYAN, BLACK);
         writeTitle(wdh, hgh, "seabattle");
         std::string Menu[4] = { " » Создать новую игру"," » Настройки", " » О игре", " » Выйти" };
         COORD button = setConsoleButton(
@@ -73,7 +72,6 @@ void mainMenu() {
 void newGameSubMenu() {
     while (true) {
         system("cls");
-        setColor(LIGHTCYAN, BLACK);
         writeTitle(width / 2 - 37, height / 2 - 14, "seabattle");
         std::string Menu[4] = { "» Расставить вручную","» Загрузить расстановку", "» Сгенерировать случайно", "» В главное меню" };
         COORD button = setConsoleButton(
