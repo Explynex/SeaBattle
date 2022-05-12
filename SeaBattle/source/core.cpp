@@ -18,7 +18,7 @@ ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
 COORD genPosArr[100], shootPosArr[100];
 int genPosAm = 100, shootPosAm = 100;
-int currdifficulty = normal;
+int currdifficulty = easy;
 int misscounter = 0;
 
 //need refactoring
@@ -451,9 +451,9 @@ void shipCountAnim(short x, short y, bool* active, short count) {
 }
 
 //refactoring complete
-void shipConstructor(char field[sz][szx]) {
-    COORD pos{};
-    short length = 0,len1=4,len2=3,len3=2,len4=1;
+int shipConstructor(char field[sz][szx]) {
+    COORD pos{},mem[4]{};
+    short length = 0, len1 = 4, len2 = 3, len3 = 2, len4 = 1;
     std::string nums[4] = { "1x","2x","3x","4x" };
     bool active[4] = { 1,1,1,1 };
     system("cls");
@@ -466,7 +466,7 @@ void shipConstructor(char field[sz][szx]) {
             pos = setConsoleButton(width / 2 + 24, height / 2, 6, 3, 1, 4, VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, nums, 2, BLACK);
             if (nums[pos.Y - 1] == "0x") Sleep(100);
         }while (nums[pos.Y-1] == "0x");
-        if (pos.Y == 0) return;
+        if (pos.Y == 0) return 0;
         else if (pos.Y == 1) {
             len4--;
             if (len4 == 0) active[3] = false;
@@ -494,10 +494,17 @@ void shipConstructor(char field[sz][szx]) {
         currAmofShips++;
         for (int i = 0;i<length ;i++){
             pos = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, 0);
+            if (pos.Y == 0 && i > 0) {
+                field[mem[i - 1].Y][mem[i-1].X] = ocean;
+                i -=2;
+                showField(fieldPlayer);
+                continue;
+            }
             sh[currAmofShips - 1].x[i] = pos.X;
             sh[currAmofShips - 1].y[i] = pos.Y;
             if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] == ocean && trueship(i + 1)) {
                 field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
+                mem[i].X = pos.X, mem[i].Y = pos.Y;
                 showField(fieldPlayer);
             }
             else  i--;
@@ -512,7 +519,7 @@ void shipConstructor(char field[sz][szx]) {
     for (int i = 0; i < sz; i++)
         for (int k = 0; k < sz; k++)
             if (fieldPlayer[i][k] == aroundSh) fieldPlayer[i][k] = ocean;
-
+    std::cin.clear();
     GotoXY(width / 2 + 28, height / 2,"Сохранить расстановку? y\\n",LIGHTCYAN,BLACK);
     wchar_t choice = _getwch();
     if(choice == 'Y' || choice == 'y' || choice == L'Н' || choice == L'н') saveInFile();
@@ -708,7 +715,10 @@ void AI(std::string mode)
     fieldBoarder(fieldBot);
     randomgen("bot", fieldBot);
 
-    if (mode == "constructor") shipConstructor(fieldPlayer);
+    if (mode == "constructor") {
+        int status = shipConstructor(fieldPlayer);
+        if (status == 0) return;
+    }
     if (mode == "fromfile")  loadFromFile();
     if (mode == "random"){
         randomgen("player", fieldPlayer);

@@ -12,7 +12,7 @@ void hitShip(int x, int y, char field[sz][szx]);
 void horOutput(int i, bool ifboarder, char field[sz][szx]);
 void gameProcess();
 void kletochki(int i);
-void shipConstructor(char field[sz][szx]);
+int shipConstructor(char field[sz][szx]);
 void shipDrown(int shipNum, char field[sz][szx]);
 void randomgen(std::string whose, char genField[sz][szx]);
 void shipOnfire(char field[sz][szx]);

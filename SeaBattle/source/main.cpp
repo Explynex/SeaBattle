@@ -9,7 +9,6 @@ int main() {
 	srand(time(NULL));
 	setConsoleNoSelection(TRUE);
 	width = getConsoleSize("width");
-
 	height = getConsoleSize("height");
 	mainMenu();
 }
