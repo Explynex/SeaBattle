@@ -20,7 +20,6 @@ void showField(char field[sz][szx]);
 void saveInFile();
 void loadFromFile();
 std::string createFolders();
-void shipCountAnim(std::string str, int posY, int shipCounter);
 void gameoverchecker();
 void freePosCrdFiller(COORD* freePosCrdArr);
 int freePosCrdDeleter(int x, int y, COORD* freePosCrdArr, int freePosCrdAm);

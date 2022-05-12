@@ -14,6 +14,25 @@ void writeTitle(short width, short height, std::string title) {
         std::cout << std::endl;
         return;
     }
+    if (title == "construct") {
+        cleaning((width - 142) / 2 + 93, (height - 43) / 2 + 1, 61, 13);
+        setColor(LIGHTCYAN, BLACK);
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 1, " ██████╗██╗  ██╗██╗██████╗ ");
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 2, "██╔════╝██║  ██║██║██╔══██╗");
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 3, "╚█████╗ ███████║██║██████╔╝");
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 4, " ╚═══██╗██╔══██║██║██╔═══╝ ");
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 5, "██████╔╝██║  ██║██║██║ ");
+        GotoXY((width - 142) / 2 + 108, (height - 43) / 2 + 6, "╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 8, "██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗ ");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 9, "██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 10, "██████╦╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 11, "██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 12, "██████╦╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║");
+        GotoXY((width - 142) / 2 + 96, (height - 43) / 2 + 13, "╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝");
+        setColor(WHITE, BLACK);
+        std::cout << std::endl;
+        return;
+    }
     if (title == "aimove") {
         cleaning((width - 142) / 2 + 93, (height - 43) / 2 + 1, 61, 13);
         setColor(LIGHTCYAN, BLACK);

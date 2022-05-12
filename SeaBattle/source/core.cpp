@@ -2,6 +2,7 @@
 
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
+enum difficulty { easy, normal, hard, suicide };
 class ship {
 public:
     int length{};
@@ -17,6 +18,8 @@ ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
 COORD genPosArr[100], shootPosArr[100];
 int genPosAm = 100, shootPosAm = 100;
+int currdifficulty = normal;
+int misscounter = 0;
 
 //need refactoring
 void gameoverchecker()
@@ -341,43 +344,63 @@ void aiPlayer(char field[sz][szx]) //основная функция ии для
     player = false;
     showField(field);
     int x, y;
-    if (shOnfire) //в прошлый раз попали по кораблю но не уничтожили
+    if (shOnfire && currdifficulty != easy) //в прошлый раз попали по кораблю но не уничтожили
     {
         Sleep(400);
-        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6, "Ожидание хода компьютера...       ",LIGHTCYAN,BLACK);
+        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6, "Ожидание хода компьютера...       ", LIGHTCYAN, BLACK);
         shipOnfire(field);
     }
     else
     {
-        while (true) //первый рандомный выстрел
+    esmark: while (true) //первый рандомный выстрел
+    {
+        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
+        std::cout << "Ожидание хода компьютера...       ";
+        // cleaning(8);
+        int idx = rand() % shootPosAm;
+        x = shootPosArr[idx].X;
+        y = shootPosArr[idx].Y;
+        if ((currdifficulty == hard && misscounter >= 8) || (currdifficulty == suicide && misscounter >= 3))
         {
-            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
-            std::cout << "Ожидание хода компьютера...       ";
-           // cleaning(8);
-            int idx = rand() % shootPosAm;
-            x = shootPosArr[idx].X;
-            y = shootPosArr[idx].Y;
-            if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
+            while (field[y][x] != aliveSh)
             {
-                shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
-                break;
+                idx = rand() % shootPosAm;
+                x = shootPosArr[idx].X;
+                y = shootPosArr[idx].Y;
             }
         }
-        if (field[y][x] == aliveSh) //если попал
+
+        if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
         {
-            Sleep(400);
-            field[y][x] = drownSh;
-            xOld = x;
-            yOld = y;
-            shOnfire = true;
-            hitShip(x, y, field);
-            if (!game)
-                return;
-            shipOnfire(field);
+            shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
+            break;
         }
-        else //если не попал первым выстрелом
-            field[y][x] = missed;
-        showField(field);
+    }
+    if (field[y][x] == aliveSh) //если попал
+    {
+        Sleep(400);
+        misscounter = 0;
+        field[y][x] = drownSh;
+        xOld = x;
+        yOld = y;
+        shOnfire = true;
+        hitShip(x, y, field);
+        if (!game)
+            return;
+        if (currdifficulty != easy)
+            shipOnfire(field);
+        else
+        {
+            showField(field);
+            goto esmark;
+        }
+    }
+    else //если не попал первым выстрелом
+    {
+        misscounter++;
+        field[y][x] = missed;
+    }
+    showField(field);
     }
 }
 
@@ -414,138 +437,85 @@ bool trueship(int curramofblocks)
         return false;
 }
 
-//need refactoring
+void shipCountAnim(short x, short y, bool* active, short count) {
+    short tempX = x;
+    for (USHORT i = 0; i < count; i++) {
+        if (active[count - 1] == true)
+            cleaning(tempX, y, 6, 3, LIGHTCYAN);
+        else
+            cleaning(tempX, y, 6, 3, DARKGRAY);
+        tempX += 8;
+    }
+    if (count == 1) return;
+    else  shipCountAnim(x, y+4, active, count - 1);
+}
+
+//refactoring complete
 void shipConstructor(char field[sz][szx]) {
-    char choice;
-    int length = 0, counter1 = 4, counter2 = 3, counter3 = 2, counter4 = 1;
+    COORD pos{};
+    short length = 0,len1=4,len2=3,len3=2,len4=1;
+    std::string nums[4] = { "1x","2x","3x","4x" };
+    bool active[4] = { 1,1,1,1 };
+    system("cls");
+    showField(fieldPlayer);
+    writeTitle(width, height, "construct");
     for (int counter = 0; counter < 10; counter++) {
-        system("cls");
-        showField(fieldPlayer);
-        writeTitle(width, height, "construct");
-        GotoXY(width / 2 + 28, height / 2 + 15);
-        std::cout << "Доступные корабли:";
-        GotoXY(width / 2 + 47, height / 2 + 15);
-        std::cout << "Однопалубных: " << counter1;
-        GotoXY(width / 2 + 47, height / 2 + 16);
-        std::cout << "Двухпалубных: " << counter2;
-        GotoXY(width / 2 + 47, height / 2 + 17);
-        std::cout << "Трёхпалубных: " << counter3;
-        GotoXY(width / 2 + 47, height / 2 + 18);
-        std::cout << "Четырехпалубных: " << counter4;
-        char x;
-      //  cleaning(8);
+        GotoXY(width / 2 + 33, height / 2 -3, "Выберите тип корабля.");
+        shipCountAnim(width / 2 + 32, height / 2, active);
+        do{
+            pos = setConsoleButton(width / 2 + 24, height / 2, 6, 3, 1, 4, VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, nums, 2, BLACK);
+            if (nums[pos.Y - 1] == "0x") Sleep(100);
+        }while (nums[pos.Y-1] == "0x");
+        if (pos.Y == 0) return;
+        else if (pos.Y == 1) {
+            len4--;
+            if (len4 == 0) active[3] = false;
+            nums[pos.Y - 1] = std::to_string(len4) + "x";
+            length = 4;
+        }
+        else if (pos.Y == 2) {
+            len3--;
+            if (len3 == 0) active[2] = false;
+            nums[pos.Y - 1] = std::to_string(len3) + "x";
+            length = 3;
+        }
+        else if (pos.Y == 3) {
+            len2--;
+            if (len2 == 0) active[1] = false;
+            nums[pos.Y - 1] = std::to_string(len2) + "x";
+            length = 2;
+        }
+        else if (pos.Y == 4) {
+            len1--;
+            if (len1 == 0) active[0] = false;
+            nums[pos.Y - 1] = std::to_string(len1) + "x";
+            length = 1;
+        }
         currAmofShips++;
-        do {
-        m: setColor(WHITE, BLACK);
-            GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12);
-            std::cout << "Введите размерность корабля:  ";
-            choice = getch();
-            if (choice == 0x1B) {
-                game = false;
-                return;
-            }
-            if (choice == 0x31 && counter1 > 0) { // проверка на нажатие кнопки и не достиг ли лимит кораблей
-                length = 1;
-                counter1--; //если не достиг то отнимаем от максимально допустимых 1
-            }
-            else if (choice == 0x31 && counter1 <= 0) { // если достиг то выводится анимация и возврат в начало цикла
-                shipCountAnim("Однопалубных: ", 15, counter1);
-                goto m;
-            }
-            if (choice == 0x32 && counter2 > 0) {
-                length = 2;
-                counter2--;
-            }
-            else if (choice == 0x32 && counter2 <= 0) {
-                shipCountAnim("Двухпалубных: ", 16, counter2);
-                goto m;
-            }
-            if (choice == 0x33 && counter3 > 0) {
-                length = 3;
-                counter3--;
-            }
-            else if (choice == 0x33 && counter3 <= 0) {
-                shipCountAnim("Трёхпалубных: ", 17, counter3);
-                goto m;
-            }
-            if (choice == 0x34 && counter4 > 0) {
-                length = 4;
-                counter4--;
-            }
-            else if (choice == 0x34 && counter4 <= 0) {
-                shipCountAnim("Четырехпалубных: ", 18, counter4);
-                goto m;
-            }
-            if (choice >= 0x31 && choice <= 0x34) {
-                setColor(YELLOW, BLACK);
-                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 8 + 12);
-                std::cout << "Введите координаты для " << choice << "-палубного корабля.";
-            }
-            else
-                goto m;
-        } while (length > 4 || length != 1 && length != 2 && length != 3 && length != 4);
-        for (int i = 0; i < length; i++)
-        {
-            setColor(WHITE, BLACK);
-            GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
-            std::cout << "Введите х" << i + 1 << " и y" << i + 1 << " :                                ";
-            GotoXY((width - 142) / 2 + 117, (height - 43) / 2 + 10 + 12 + i);
-            std::cin >> x >> sh[currAmofShips - 1].y[i];
-            if (x >= 65 && x <= 74)
-                sh[currAmofShips - 1].x[i] = x - 64;
-            else if (x >= 97 && x <= 106)
-                sh[currAmofShips - 1].x[i] = x - 96;
+        for (int i = 0;i<length ;i++){
+            pos = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, 0);
+            sh[currAmofShips - 1].x[i] = pos.X;
+            sh[currAmofShips - 1].y[i] = pos.Y;
             if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] == ocean && trueship(i + 1)) {
                 field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] = aliveSh;
-            }
-            else if (field[sh[currAmofShips - 1].y[i]][sh[currAmofShips - 1].x[i]] != ocean || std::cin.fail() || !trueship(i + 1)) { // проверка правильности ввода 
-                std::cin.clear();
-                std::cin.ignore(32767, '\n');
                 showField(fieldPlayer);
-                setColor(LIGHTRED, BLACK);
-                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 22 + i);
-                std::cout << "                                                                       ";
-                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
-                std::cout << "Ошибка! Некорректные данные.\n";
-                Sleep(1000);
-                GotoXY((width - 142) / 2 + 99, (height - 43) / 2 + 10 + 12 + i);
-                std::cout << "                                                               ";
-                i--;
             }
+            else  i--;
+            Sleep(100);
         }
         sh[currAmofShips - 1].length = length;
         sh[currAmofShips - 1].hp = length;
         shiparoundC(currAmofShips - 1, fieldPlayer);
     }
-    showField(fieldPlayer);
-    //cleaning(22);
+    cleaning(width / 2 + 23, height / 2 - 3, 40, 20);
+
     for (int i = 0; i < sz; i++)
-    {
         for (int k = 0; k < sz; k++)
-        {
-            if (fieldPlayer[i][k] == aroundSh)
-                fieldPlayer[i][k] = ocean;
-        }
-    }
-    GotoXY(width / 2 + 28, height / 2);
-    std::cout << "Сохранить расстановку? y\\n";
-    choice = getch();
-    if (choice == 0x1B) {
-        game = false;
-        return;
-    }
-    switch (choice) {
-    case'y':
-        saveInFile();
-        break;
-    case'Y':
-        saveInFile();
-        break;
-    default:
-        break;
-    }
-   // cleaning(8);
-    showField(fieldPlayer);
+            if (fieldPlayer[i][k] == aroundSh) fieldPlayer[i][k] = ocean;
+
+    GotoXY(width / 2 + 28, height / 2,"Сохранить расстановку? y\\n",LIGHTCYAN,BLACK);
+    wchar_t choice = _getwch();
+    if(choice == 'Y' || choice == 'y' || choice == L'Н' || choice == L'н') saveInFile();
 }
 
 //refactoring complete
@@ -729,28 +699,11 @@ void loadFromFile() {
     }
 }
 
-void shipCountAnim(std::string str, int posY, int shipCounter) {
-    setColor(LIGHTRED, BLACK);
-    GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout << str << shipCounter;
-    Sleep(200);
-    setColor(WHITE, BLACK);
-    GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout << str << shipCounter;
-    Sleep(200);
-    setColor(LIGHTRED, BLACK);
-    GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout << str << shipCounter;
-    Sleep(200);
-    setColor(WHITE, BLACK);
-    GotoXY(width / 2 + 47, height / 2 + posY);
-    std::cout << str << shipCounter;
-}
-
 //refactoring complete
 void AI(std::string mode)
 {
     game = true;
+    player = false;
     fieldBoarder(fieldPlayer);
     fieldBoarder(fieldBot);
     randomgen("bot", fieldBot);
