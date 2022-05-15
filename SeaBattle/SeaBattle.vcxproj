@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DevAttribute\devattribute.cpp" />
     <ClCompile Include="source\core.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\graphic\menu.cpp" />
@@ -152,9 +153,6 @@
     <ClInclude Include="DevAttribute\devattribute.h" />
     <ClInclude Include="headers\core.h" />
     <ClInclude Include="headers\output.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="DevAttribute\devattribute.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

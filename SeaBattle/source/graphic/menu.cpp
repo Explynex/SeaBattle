@@ -6,10 +6,10 @@
 void aboutgame()
 {
     system("cls");
-  //  setColor(Yellow, Black);
+    setColor(YELLOW, BLACK);
     GotoXY((width - 70) / 2+30, (height - 5) / 2 - 7);
     std::cout << "О игре.";
- //   setColor(White, Black);
+    setColor(WHITE, BLACK);
     GotoXY((width - 70) / 2, (height - 5) / 2-6);
     std::cout << "      «Морской бой» — игра для двух участников, в которой игроки";
     GotoXY((width - 70) / 2, (height - 5) / 2 -5);
@@ -21,9 +21,9 @@ void aboutgame()
     GotoXY((width - 70) / 2, (height - 5) / 2 -2);
     std::cout << "ещё один ход. Цель игрока — первым потопить все корабли противника.";
     GotoXY((width - 70) / 2+32, (height - 5) / 2 );
-  //  setColor(Yellow, Black);
+    setColor(YELLOW, BLACK);
     std::cout << "FAQ";
-   // setColor(White, Black);
+    setColor(WHITE, BLACK);
     GotoXY((width - 70) / 2, (height - 5) / 2 +1);
     std::cout << " • Как добавлять корабли? - Начать новую игру и выбрать: «Расставить вручную».";
     GotoXY((width - 70) / 2+3, (height - 5) / 2 +2);
@@ -40,10 +40,10 @@ void aboutgame()
     std::cout << " • Для возврата в меню из «Конструктора», »Загрузчика» и «Генератора расстановок» - «Esc».";
     GotoXY((width - 70) / 2, (height - 5) / 2 + 8);
     std::cout << " • Для возврата в меню во время игры стоит написать вместо координат «00» ";
-  //  setColor(LightRed, Black);
+    setColor(LIGHTRED, BLACK);
     GotoXY((width - 20) / 2 , (height - 5) / 2 + 10);
     std::cout << " >> Вернуться в меню";
-   //setColor(Black, Black);
+   setColor(BLACK, BLACK);
     system("pause");
 
 }
@@ -51,18 +51,20 @@ void aboutgame()
 //end trashpack
 
 void mainMenu() {
+    short wdh = width / 2 - 37, hgh = height / 2 - 14;
+    std::string Menu[4] = { " » Создать новую игру"," » Настройки", " » О игре", " » Выйти" };
     while (true) {
         system("cls");
-        short wdh = width / 2 - 37, hgh = height / 2 - 14;
         writeTitle(wdh, hgh, "seabattle");
-        std::string Menu[4] = { " » Создать новую игру"," » Настройки", " » О игре", " » Выйти" };
+        GotoXY(wdh+24, hgh +8, "Победы: " + std::to_string(wins) + " ◂▸ Поражения: " + std::to_string(losses),BROWN,BLACK);
         COORD button = setConsoleButton(
             (width - 25) / 2, (height - 6) / 2, 25, 3, 1, 4,
-            VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, Menu, 1, BLACK
+            VK_LBUTTON, DARKGRAY, LIGHTCYAN, correctY, correctX, true, 1, LIGHTCYAN, BLACK, Menu, 1, BLACK
         );
         Sleep(80);
         if (button.Y == 0 || button.Y == 4) return;
         else if (button.Y == 3) aboutgame();
+        else if (button.Y == 2) optionsSubMenu();
         else if (button.Y == 1) newGameSubMenu();
         Sleep(80);
     }
@@ -70,18 +72,62 @@ void mainMenu() {
 
 
 void newGameSubMenu() {
+    std::string Menu[4] = { "» Расставить вручную","» Загрузить расстановку", "» Сгенерировать случайно", "» В главное меню" };
     while (true) {
         system("cls");
         writeTitle(width / 2 - 37, height / 2 - 14, "seabattle");
-        std::string Menu[4] = { "» Расставить вручную","» Загрузить расстановку", "» Сгенерировать случайно", "» В главное меню" };
+        GotoXY(width / 2 - 13, height / 2 - 6, "Победы: " + std::to_string(wins) + " ◂▸ Поражения: " + std::to_string(losses), BROWN, BLACK);
         COORD button = setConsoleButton(
             (width - 27) / 2, (height - 6) / 2, 27, 3, 1, 4,
-            VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, Menu, 2, BLACK
+            VK_LBUTTON, DARKGRAY, LIGHTCYAN, correctY, correctX, true, 1, LIGHTCYAN, BLACK, Menu, 2, BLACK
         );
         if (button.Y == 0 || button.Y == 4) return;
         else if (button.Y == 1) AI("constructor");
         else if (button.Y == 2) AI("fromfile");
         else if (button.Y == 3) AI("random");
+        Sleep(80);
+    }
+}
+
+void optionsSubMenu() {
+    system("cls");
+    while (true) {
+        std::string Menu[3] = { "» Сложность: " + curdifficulty,"» Калибровка курсора","» В главное меню" };
+        writeTitle(width / 2 - 36, height / 2 - 14, "options");
+        COORD button = setConsoleButton(
+            (width - 25) / 2, (height - 6) / 2, 27, 3, 1, 3,
+            VK_LBUTTON, DARKGRAY, LIGHTCYAN, correctY, correctX, true, 1, LIGHTCYAN, BLACK, Menu, 2, BLACK
+        );
+        if (button.Y == 0 || button.Y == 3) {
+            propManager(true);
+            return;
+        }
+        else if (button.Y == 1) {
+            if (curdifficulty == "Easy") curdifficulty = "Normal";
+            else if (curdifficulty == "Normal") curdifficulty = "Hard";
+            else if (curdifficulty == "Hard") curdifficulty = "Suicide";
+            else if (curdifficulty == "Suicide") curdifficulty = "Easy";
+        }
+        else if (button.Y == 2) {
+            while (true) {
+                std::string Menu[2] = { "X: "+std::to_string(correctX),"Y: " + std::to_string(correctY)};
+                COORD button = setConsoleButton(
+                    (width+33) / 2, (height - 2) / 2, 10, 3, 1, 2,
+                    VK_LBUTTON, DARKGRAY, LIGHTCYAN, correctY,correctX, true, 1, LIGHTCYAN, BLACK, Menu, 3, BLACK, VK_RBUTTON
+                );
+                if (button.Y == 0) {
+                    cleaning((width + 31) / 2, (height - 3) / 2, 12, 10);
+                    propManager(true);
+                    break;
+                }
+                if (button.Y == 1) correctX >5 ? 0 : correctX++;
+                if (button.Y == -1) correctX < -5 ? 0 : correctX--;
+                if (button.Y == 2) correctY > 5 ? 0 : correctY++;
+                if (button.Y == -2) correctY < -5 ? 0 : correctY--;
+                Sleep(80);
+            }
+
+        }
         Sleep(80);
     }
 }

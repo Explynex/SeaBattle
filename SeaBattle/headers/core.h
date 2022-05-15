@@ -2,7 +2,7 @@
 #ifndef _CORE_H_
 #define _CORE_H_
 #include "output.h"
-
+#include <thread>
 const int sz = 12, szx = 12;
 
 void AI(std::string mode);
@@ -20,7 +20,7 @@ void showField(char field[sz][szx]);
 void saveInFile();
 void loadFromFile();
 std::string createFolders();
-void gameoverchecker();
+bool gameoverchecker();
 void freePosCrdFiller(COORD* freePosCrdArr);
 int freePosCrdDeleter(int x, int y, COORD* freePosCrdArr, int freePosCrdAm);
 void freePosCrdShow(COORD* freePosCrdArr, int freePosCrdAm);

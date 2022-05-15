@@ -27,6 +27,9 @@
     <ClCompile Include="source\core.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="DevAttribute\devattribute.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\output.h">
@@ -38,8 +41,5 @@
     <ClInclude Include="headers\core.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="DevAttribute\devattribute.lib" />
   </ItemGroup>
 </Project>

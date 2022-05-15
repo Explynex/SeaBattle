@@ -2,12 +2,15 @@
 
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-enum difficulty { easy, normal, hard, suicide };
-class ship {
-public:
+struct ship {
     int length{};
     int hp = 0;
     int x[4]{}, y[4]{};
+};
+
+struct Timer {
+    short minutes{};
+    short seconds{};
 };
 
 bool d1 = true, d2 = true, d3 = true, d4 = true, shOnfire = false, player = false, game;
@@ -18,40 +21,34 @@ ship sh[maxamountOfShips * 2], shgen[maxamountOfShips];
 char fieldPlayer[sz][szx], fieldBot[sz][szx];
 COORD genPosArr[100], shootPosArr[100];
 int genPosAm = 100, shootPosAm = 100;
-int currdifficulty = easy;
 int misscounter = 0;
+std::string Time;
 
-//need refactoring
-void gameoverchecker()
+bool gameoverchecker()
 {
-    if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0)
-    {
+    if (sh[0].hp + sh[1].hp + sh[2].hp + sh[3].hp + sh[4].hp + sh[5].hp + sh[6].hp + sh[7].hp + sh[8].hp + sh[9].hp == 0){
         system("cls");
-        setColor(WHITE, BLACK);
         writeTitle(width, height, "aiwin");
-        GotoXY((width - 34) / 2 + 3, (height - 11) / 2 + 10);
-        std::cout << "Нажмите любую кнопку для продолжения ...";
-        setColor(BLACK, BLACK);
-        system("pause");
-        setColor(WHITE, BLACK);
+        GotoXY(width / 2-16, height / 2+2, "Продолжительность игры: " + Time + "с.",LIGHTCYAN,BLACK);
         game = false;
+        losses++;
+        propManager(true);
+        winPause();
+        return false;
     }
-
-    if (sh[10].hp + sh[11].hp + sh[12].hp + sh[13].hp + sh[14].hp + sh[15].hp + sh[16].hp + sh[17].hp + sh[18].hp + sh[19].hp == 0)
-    {
+    if (sh[10].hp + sh[11].hp + sh[12].hp + sh[13].hp + sh[14].hp + sh[15].hp + sh[16].hp + sh[17].hp + sh[18].hp + sh[19].hp == 0){
         system("cls");
-        setColor(WHITE, BLACK);
         writeTitle(width, height, "playerwin");
-        GotoXY((width - 34) / 2 + 3, (height - 11) / 2 + 10);
-        std::cout << "Нажмите любую кнопку для продолжения ...";
-        setColor(BLACK, BLACK);
-        system("pause");
-        setColor(WHITE, BLACK);
+        GotoXY(width / 2-16, height / 2+2, "Продолжительность игры: " + Time + "с.",LIGHTCYAN,BLACK);
+        wins++;
+        propManager(true);
         game = false;
+        winPause();
+        return false;
     }
+    return true;
 }
 
-//refactoring complete
 void gameProcess()
 {
     shootPosAm = 100;
@@ -59,6 +56,8 @@ void gameProcess()
     COORD shoot{};
     bool hit = false;
     cleaning((width - 142) / 2 + 95, (height - 43) / 2 + 21, 50, 3);
+    std::thread th(timer);
+    Sleep(20);
     while (true && game)
     {
         writeTitle(width, height, "playermove");
@@ -68,9 +67,10 @@ void gameProcess()
         setColor(LIGHTCYAN, BLACK);
         GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 18, "Клик по клетке для выстрела!");
         do {
-            shoot = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, 0);
+            shoot = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, correctY,correctX);
             if (shoot.Y == 0 || shoot.X == 0) {
                 game = false;
+                th.detach();
                 return;
             }
         } while (fieldBot[shoot.Y][shoot.X] == drownSh || fieldBot[shoot.Y][shoot.X] == missed);
@@ -78,7 +78,7 @@ void gameProcess()
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 18, "Попадание!                   ",LIGHTGREEN,BLACK);
             fieldBot[shoot.Y][shoot.X] = drownSh;
             hitShip(shoot.X, shoot.Y, fieldBot);
-            Sleep(800);
+            Sleep(500);
             hit = true;
         }
         else {
@@ -88,11 +88,12 @@ void gameProcess()
         }
         if (hit == false) {
             showField(fieldBot);
-            Sleep(1200);
+            Sleep(800);
             aiPlayer(fieldPlayer);
-            Sleep(1200);
+            Sleep(800);
         }
     }
+    th.detach();
 }
 
 void fieldBoarder(char field[sz][szx]) {
@@ -188,6 +189,7 @@ void showField(char field[sz][szx]) {
 
     }
 }
+
 void shipDrown(int shipNum, char field[sz][szx]) { //функция затопления корабля
     if (!player)
     {
@@ -219,6 +221,7 @@ void shipDrown(int shipNum, char field[sz][szx]) { //функция затопл
         }
     }
 }
+
 void hitShip(int x, int y, char field[sz][szx]) { //функция снятия хп у корабля при попадании
     if (!player)
         for (int k = 0; k < maxamountOfShips; k++)
@@ -234,7 +237,6 @@ void hitShip(int x, int y, char field[sz][szx]) { //функция снятия 
                         shipDrown(k, field);
                     }
                     showField(field);
-                    gameoverchecker();
                 }
             }
         }
@@ -252,7 +254,6 @@ void hitShip(int x, int y, char field[sz][szx]) { //функция снятия 
                         shipDrown(k, field);
                     }
                     showField(field);
-                    gameoverchecker();
                 }
             }
         }
@@ -339,69 +340,71 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
-    setColor(WHITE, BLACK);
-    writeTitle(width, height, "aimove");
-    player = false;
-    showField(field);
-    int x, y;
-    if (shOnfire && currdifficulty != easy) //в прошлый раз попали по кораблю но не уничтожили
-    {
-        Sleep(400);
-        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6, "Ожидание хода компьютера...       ", LIGHTCYAN, BLACK);
-        shipOnfire(field);
-    }
-    else
-    {
-    esmark: while (true) //первый рандомный выстрел
-    {
-        GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6);
-        std::cout << "Ожидание хода компьютера...       ";
-        // cleaning(8);
-        int idx = rand() % shootPosAm;
-        x = shootPosArr[idx].X;
-        y = shootPosArr[idx].Y;
-        if ((currdifficulty == hard && misscounter >= 8) || (currdifficulty == suicide && misscounter >= 3))
+        if (!gameoverchecker()) return;
+        setColor(WHITE, BLACK);
+        writeTitle(width, height, "aimove");
+        player = false;
+        showField(field);
+        int x, y;
+        if (shOnfire && curdifficulty != "Easy") //в прошлый раз попали по кораблю но не уничтожили
         {
-            while (field[y][x] != aliveSh)
-            {
-                idx = rand() % shootPosAm;
-                x = shootPosArr[idx].X;
-                y = shootPosArr[idx].Y;
-            }
-        }
-
-        if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
-        {
-            shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
-            break;
-        }
-    }
-    if (field[y][x] == aliveSh) //если попал
-    {
-        Sleep(400);
-        misscounter = 0;
-        field[y][x] = drownSh;
-        xOld = x;
-        yOld = y;
-        shOnfire = true;
-        hitShip(x, y, field);
-        if (!game)
-            return;
-        if (currdifficulty != easy)
+            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6, "Ожидание хода компьютера...       ", LIGHTCYAN, BLACK);
             shipOnfire(field);
+            return;
+        }
         else
         {
-            showField(field);
-            goto esmark;
+        esmark: while (true) //первый рандомный выстрел
+        {
+            GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 12 + 6, "Ожидание хода компьютера...       ", LIGHTCYAN, BLACK);
+            Sleep(300);
+            int idx = rand() % shootPosAm;
+            x = shootPosArr[idx].X;
+            y = shootPosArr[idx].Y;
+            if ((curdifficulty == "Hard" && misscounter >= 8) || (curdifficulty == "Suicide" && misscounter >= 3))
+            {
+                while (field[y][x] != aliveSh)
+                {
+                    idx = rand() % shootPosAm;
+                    x = shootPosArr[idx].X;
+                    y = shootPosArr[idx].Y;
+                }
+            }
+
+            if (field[y][x] != missed && field[y][x] != drownSh && field[y][x] != boarder)
+            {
+                shootPosAm = freePosCrdDeleter(x, y, shootPosArr, shootPosAm);
+                break;
+            }
         }
-    }
-    else //если не попал первым выстрелом
-    {
-        misscounter++;
-        field[y][x] = missed;
-    }
-    showField(field);
-    }
+        if (field[y][x] == aliveSh) //если попал
+        {
+            misscounter = 0;
+            field[y][x] = drownSh;
+            xOld = x;
+            yOld = y;
+            shOnfire = true;
+            hitShip(x, y, field);
+            if (!game)
+                return;
+            if (curdifficulty != "Easy") {
+                shipOnfire(field);
+                return;
+            }
+            else
+            {
+                Sleep(300);
+                showField(field);
+                goto esmark;
+            }
+        }
+        else //если не попал первым выстрелом
+        {
+            misscounter++;
+            field[y][x] = missed;
+        }
+        showField(field);
+        }
 }
 
 void shiparoundC(int shipNum, char field[sz][szx]) {
@@ -450,7 +453,6 @@ void shipCountAnim(short x, short y, bool* active, short count) {
     else  shipCountAnim(x, y+4, active, count - 1);
 }
 
-//refactoring complete
 int shipConstructor(char field[sz][szx]) {
     COORD pos{},mem[4]{};
     short length = 0, len1 = 4, len2 = 3, len3 = 2, len4 = 1;
@@ -463,7 +465,9 @@ int shipConstructor(char field[sz][szx]) {
         GotoXY(width / 2 + 33, height / 2 -3, "Выберите тип корабля.");
         shipCountAnim(width / 2 + 32, height / 2, active);
         do{
-            pos = setConsoleButton(width / 2 + 24, height / 2, 6, 3, 1, 4, VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, nums, 2, BLACK);
+            pos = setConsoleButton(width / 2 + 24, height / 2, 6, 3, 1, 4, VK_LBUTTON, DARKGRAY,
+                LIGHTCYAN, correctY, correctX, true, 1, LIGHTCYAN, BLACK, nums, 2, BLACK
+            );
             if (nums[pos.Y - 1] == "0x") Sleep(100);
         }while (nums[pos.Y-1] == "0x");
         if (pos.Y == 0) return 0;
@@ -493,7 +497,7 @@ int shipConstructor(char field[sz][szx]) {
         }
         currAmofShips++;
         for (int i = 0;i<length ;i++){
-            pos = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, 0);
+            pos = setConsoleButton(width / 2 - 65, height / 2 - 19, 6, 3, 10, 10, VK_LBUTTON, NUL, NUL, correctY,correctX);
             if (pos.Y == 0 && i > 0) {
                 field[mem[i - 1].Y][mem[i-1].X] = ocean;
                 i -=2;
@@ -515,7 +519,6 @@ int shipConstructor(char field[sz][szx]) {
         shiparoundC(currAmofShips - 1, fieldPlayer);
     }
     cleaning(width / 2 + 23, height / 2 - 3, 40, 20);
-
     for (int i = 0; i < sz; i++)
         for (int k = 0; k < sz; k++)
             if (fieldPlayer[i][k] == aroundSh) fieldPlayer[i][k] = ocean;
@@ -525,7 +528,6 @@ int shipConstructor(char field[sz][szx]) {
     if(choice == 'Y' || choice == 'y' || choice == L'Н' || choice == L'н') saveInFile();
 }
 
-//refactoring complete
 void saveInFile() { //сохранениие поля игрока в файл
     showConsoleCursor(TRUE);
     std::string name;
@@ -553,7 +555,20 @@ void saveInFile() { //сохранениие поля игрока в файл
     Sleep(1500);
 }
 
-//refactoring complete
+void timer() {
+    Timer timer{};
+    for (;game;timer.minutes++) {
+        for (timer.seconds = 0;;timer.seconds++){
+            if (timer.seconds == 60 || !game ) break;
+            if (timer.seconds < 10 && timer.minutes < 10) Time = "0" + std::to_string(timer.minutes) + " : 0" + std::to_string(timer.seconds);
+            else if (timer.seconds > 9 && timer.minutes < 10) Time = "0" + std::to_string(timer.minutes) + " : " + std::to_string(timer.seconds);
+            else if (timer.seconds < 10 && timer.minutes > 9) Time = std::to_string(timer.minutes) + " : 0" + std::to_string(timer.seconds);
+            else if (timer.seconds > 9 && timer.minutes > 9) Time = std::to_string(timer.minutes) + " : " + std::to_string(timer.seconds);
+            Sleep(1000);
+        }
+    }
+}
+
 std::string createFolders() {
     std::string userName = utf.getPath("username");
     std::string folderPath = "C:\\Users\\" + userName + "\\Documents\\SeaBattle";
@@ -608,6 +623,36 @@ void predprosmotr(std::string menu, int pointer, int counter)
         }
     }
 
+}
+
+void propManager(bool save) {
+    const char* props[5] = { "Difficulty: ","Calibration_X: ","Calibration_Y: ","Wins: ","Losses: "};
+    std::ofstream fout;
+    std::ifstream fin;
+    std::string temp;
+    fin.open("propertions.ini");
+    if (!fin.is_open() || save) {
+        fin.close();
+        fout.open("propertions.ini");
+        for (short i = 0; i < 5; i++){
+            fout << props[i];
+            if (i == 0) fout << curdifficulty << "\n";
+            if (i == 1) fout << correctX << "\n";
+            if (i == 2) fout << correctY << "\n";
+            if (i == 3) fout << wins << "\n";
+            if (i == 4) fout << losses << "\n";
+        }
+        fout.close();
+    }
+    else {
+        for (short i = 0; i < 3, fin >> temp; i++) {
+            if (i == 1) curdifficulty = temp;
+            if (i == 3) correctX = std::stoi(temp);
+            if (i == 5) correctY = std::stoi(temp);
+            if (i == 7) wins = std::stoi(temp);
+            if (i == 9) losses = std::stoi(temp);
+        }
+    }
 }
 
 // refactoring complete
@@ -728,7 +773,7 @@ void AI(std::string mode)
         GotoXY(width / 2 + 28, height / 2, "Сохранить расстановку?",LIGHTCYAN,BLACK);
         COORD button = setConsoleButton(
             (width / 2)+53, height / 2, 5, 1, 2, 1,
-            VK_LBUTTON, DARKGRAY, LIGHTCYAN, 0, true, 1, LIGHTCYAN, BLACK, choice, 1, BLACK );
+            VK_LBUTTON, DARKGRAY, LIGHTCYAN, correctY, correctX, true, 1, LIGHTCYAN, BLACK, choice, 1, BLACK );
         if (button.X == 0) return;
         else if (button.X == 1) saveInFile();
     }
@@ -770,17 +815,6 @@ void shiparound(int shipNum, char genField[sz][szx])
                     genField[shgen[shipNum].y[i] + m][shgen[shipNum].x[i] + n] = aroundSh;
                     genPosAm = freePosCrdDeleter(shgen[shipNum].x[i] + n, shgen[shipNum].y[i] + m, genPosArr, genPosAm);
                 }
-}
-void testgen(char genField[sz][szx]) {
-    for (int i = 0; i < sz; i++)
-    {
-        for (int k = 0; k < szx; k++)
-        {
-            std::cout << genField[i][k];
-        }
-        std::cout << "\n";
-    }
-
 }
 int generator(std::string whose,int shipNum, char genField[sz][szx])
 {
@@ -909,15 +943,6 @@ void randomgen(std::string whose, char genField[sz][szx])
         randFieldIntegrator(genField, 0);
     else
         randFieldIntegrator(genField, 10);
-}
-void freePosCrdShow(COORD* freePosCrdArr, int freePosCrdAm)
-{
-    for (int i = 0; i < freePosCrdAm; i++)
-    {
-
-        std::cout << "\n List : " << freePosCrdArr[i].X << "\t" << freePosCrdArr[i].Y;
-
-    }
 }
 void freePosCrdFiller(COORD* freePosCrdArr)
 {

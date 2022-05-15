@@ -1,6 +1,7 @@
 #include "output.h"
 
-short width, height;
+std::string curdifficulty = "Easy";
+short width, height, correctX = 0, correctY = 0, wins = 0, losses = 0;
 
 int main() {
 	utf.setUtfLocale();
@@ -10,5 +11,6 @@ int main() {
 	setConsoleNoSelection(TRUE);
 	width = getConsoleSize("width");
 	height = getConsoleSize("height");
+	propManager();
 	mainMenu();
 }

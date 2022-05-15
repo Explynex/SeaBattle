@@ -23,55 +23,12 @@
 #include <Windows.h>
 #include <string>
 #include <codecvt>
-#include <Psapi.h>
 #include <fstream>
 
-//
-// Types
-//
-
-typedef struct _SYSTEM_FILECACHE_INFORMATION
-{
-    SIZE_T CurrentSize;
-    SIZE_T PeakSize;
-    ULONG PageFaultCount;
-    SIZE_T MinimumWorkingSet;
-    SIZE_T MaximumWorkingSet;
-    SIZE_T CurrentSizeIncludingTransitionInPages;
-    SIZE_T PeakSizeIncludingTransitionInPages;
-    ULONG TransitionRePurposeCount;
-    ULONG Flags;
-} SYSTEM_FILECACHE_INFORMATION;
-
-typedef struct _MEMORY_COMBINE_INFORMATION_EX
-{
-    HANDLE Handle;
-    ULONG_PTR PagesCombined;
-    ULONG Flags;
-} MEMORY_COMBINE_INFORMATION_EX, * PMEMORY_COMBINE_INFORMATION_EX;
 
 //
 // Enums
 //
-
-typedef enum _SYSTEM_INFORMATION_CLASS
-{
-    SystemFileCacheInformation = 21,
-    SystemMemoryListInformation = 80,
-    SystemCombinePhysicalMemoryInformation = 130
-};
-
-typedef enum _SYSTEM_MEMORY_LIST_COMMAND
-{
-    nul = -1,
-    CaptureAccessedBits,
-    CaptureAndResetAccessedBits,
-    EmptyWorkingSets,
-    FlushModifiedList,
-    PurgeStandbyList,
-    PurgeLowPriorityStandbyList,
-    CommandMax
-} SYSTEM_MEMORY_LIST_COMMAND;
 
 typedef enum  consoleColor {
     NUL = -1,BLACK, BLUE, GREEN, CYAN, RED, MAGENTA, BROWN, LIGHTGRAY, DARKGRAY, LIGHTBLUE, LIGHTGREEN, LIGHTCYAN, LIGHTRED, LIGHTMAGENTA, YELLOW, WHITE
@@ -150,22 +107,14 @@ void setConsoleNoSelection(
     BOOL status
 );
 
-
 void consoleResize(
     BOOL status
 );
 
-
-
-bool removeLineFromFile(
-    std::string filename,
-    int index
+int fact(
+    int val
 );
 
-LONG calc_percentof64(
-    _In_ LONG64 length,
-    _In_ LONG64 total_length
-);
 
 COORD setConsoleButton(
     int x,
@@ -177,14 +126,16 @@ COORD setConsoleButton(
     int returnButton = VK_RBUTTON,
     consoleColor inactiveButton = DARKGRAY,
     consoleColor activeButton = WHITE,
-    int YCorrect = 1,
+    int YCorrect = 0,
+    int XCorrect = 0,
     bool boarder = false,
     int boarder_style = 0,
     consoleColor boarderColor = WHITE,
     consoleColor backBoarderColor = BLACK,
     std::string titles[] = 0,
     int titlesIndent = 2,
-    consoleColor titlesColor = WHITE
+    consoleColor titlesColor = WHITE,
+    int subReturn = NULL
 );
 
 std::string printFilter(
@@ -206,12 +157,8 @@ std::string printFilter(
 class strtools
 {
 public:
-    std::string tolower(std::string str, std::string flag ="");
-    std::string toupper(std::string str,std::string flag="");
-    std::string strexplus(std::string str1, std::string str2);
     std::wstring stows(const std::string& str) { return converter.from_bytes(str); }
     std::string wstos(const std::wstring& str) { return converter.to_bytes(str); }
-    int strfind(std::string str1, std::string str2);
     void setUtfLocale() {
         if (init == false) {
             SetConsoleOutputCP(65001);
@@ -281,6 +228,7 @@ static strtools utf;
 //
 // Templates
 //
+
 
 #if ( __cplusplus >= 201103L || _MSC_VER)
 #define SWITCH_DECLTYPE decltype

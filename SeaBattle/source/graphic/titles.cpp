@@ -3,13 +3,23 @@
 void writeTitle(short width, short height, std::string title) {
     setColor(LIGHTCYAN, BLACK);
     if (title == "seabattle") {
-        GotoXY(width, height++, " ██████╗███████╗ █████╗   ██████╗  █████╗ ████████╗████████╗██╗     ███████╗");
-        GotoXY(width, height++, "██╔════╝██╔════╝██╔══██╗  ██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║     ██╔════╝");
-        GotoXY(width, height++, "██║     ██║════╝██╔══██║  ██╔══██║██╔══██║   ██║      ██║   ██║     ██║════╝");
-        GotoXY(width, height++, "╚█████╗ █████╗  ███████║  ██████╦╝███████║   ██║      ██║   ██║     █████╗  ");
-        GotoXY(width, height++, " ╚═══██╗██╔══╝  ██╔══██║  ██╔══██╗██╔══██║   ██║      ██║   ██║     ██╔══╝  ");
-        GotoXY(width, height++, "██████╔╝███████╗██║  ██║  ██████╦╝██║  ██║   ██║      ██║   ███████╗███████╗");
-        GotoXY(width, height++, "╚═════╝ ╚══════╝╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝╚══════╝");
+        GotoXY(width+1, height++, " ██████╗███████╗ █████╗ ██████╗  █████╗ ████████╗████████╗██╗     ███████╗");
+        GotoXY(width + 1, height++, "██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║     ██╔════╝");
+        GotoXY(width + 1, height++, "╚█████╗ █████╗  ███████║██████╦╝███████║   ██║      ██║   ██║     █████╗  ");
+        GotoXY(width + 1, height++, " ╚═══██╗██╔══╝  ██╔══██║██╔══██╗██╔══██║   ██║      ██║   ██║     ██╔══╝  ");
+        GotoXY(width + 1, height++, "██████╔╝███████╗██║  ██║██████╦╝██║  ██║   ██║      ██║   ███████╗███████╗");
+        GotoXY(width + 1, height++, "╚═════╝ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝╚══════╝");
+        setColor(WHITE, BLACK);
+        std::cout << std::endl;
+        return;
+    }
+    if (title == "options") {
+        GotoXY(width+10, height++, " █████╗ ██████╗ ████████╗██╗ █████╗ ███╗  ██╗ ██████╗");
+        GotoXY(width+10, height++, "██╔══██╗██╔══██╗╚══██╔══╝██║██╔══██╗████╗ ██║██╔════╝");
+        GotoXY(width+10, height++, "██║  ██║██████╔╝   ██║   ██║██║  ██║██╔██╗██║╚█████╗ ");
+        GotoXY(width+10, height++, "██║  ██║██╔═══╝    ██║   ██║██║  ██║██║╚████║ ╚═══██╗");
+        GotoXY(width+10, height++, "╚█████╔╝██║        ██║   ██║╚█████╔╝██║ ╚███║██████╔╝");
+        GotoXY(width+10, height++, " ╚════╝ ╚═╝        ╚═╝   ╚═╝ ╚════╝ ╚═╝  ╚══╝╚═════╝ ");
         setColor(WHITE, BLACK);
         std::cout << std::endl;
         return;
@@ -91,21 +101,6 @@ void writeTitle(short width, short height, std::string title) {
         setColor(WHITE, BLACK);
         std::cout << std::endl;
         return;
-    }
-    if (title == "title")
-    {
-        GotoXY(width / 2 - 26, (height - 5) / 4);
-        std::cout << "                                ██               ██ ";
-        GotoXY(width / 2 - 26, (height - 6) / 4 + 1);
-        std::cout << "█   █ ████ ████ ████ █  █ ████ █  █   ████ ████ █  █";
-        GotoXY(width / 2 - 26, (height - 6) / 4 + 2);
-        std::cout << "██ ██ █  █ █  █ █  █ █ █  █  █ █  █   █    █  █ █  █";
-        GotoXY(width / 2 - 26, (height - 6) / 4 + 3);
-        std::cout << "█ █ █ █  █ ████ █    ██   █  █ █ ██   ████ █  █ █ ██";
-        GotoXY(width / 2 - 26, (height - 6) / 4 + 4);
-        std::cout << "█   █ █  █ █    █  █ █ █  █  █ ██ █   █  █ █  █ ██ █";
-        GotoXY(width / 2 - 26, (height - 6) / 4 + 5);
-        std::cout << "█   █ ████ █    ████ █  █ ████ █  █   ████ ████ █  █";
     }
 }
 
