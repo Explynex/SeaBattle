@@ -78,18 +78,21 @@ void gameProcess()
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 18, "Попадание!                   ",LIGHTGREEN,BLACK);
             fieldBot[shoot.Y][shoot.X] = drownSh;
             hitShip(shoot.X, shoot.Y, fieldBot);
-            Sleep(500);
+            Beep(100, 40);
+            Sleep(450);
             hit = true;
         }
         else {
             GotoXY((width - 142) / 2 + 95, (height - 43) / 2 + 18,"Промах!                     ", LIGHTRED, BLACK);
             fieldBot[shoot.Y][shoot.X] = missed;
+            Beep(36, 30);
             hit = false;
         }
         if (hit == false) {
             showField(fieldBot);
             Sleep(800);
             aiPlayer(fieldPlayer);
+            if (!gameoverchecker()) break;
             Sleep(800);
         }
     }
@@ -340,7 +343,6 @@ void shipOnfire(char field[sz][szx]) {//функция ии для продол�
 
 void aiPlayer(char field[sz][szx]) //основная функция ии для боя
 {
-        if (!gameoverchecker()) return;
         setColor(WHITE, BLACK);
         writeTitle(width, height, "aimove");
         player = false;
@@ -936,8 +938,6 @@ int generator(std::string whose,int shipNum, char genField[sz][szx])
         {
             shiparound(shipNum, genField);
         }
-        //testgen(genField);
-        //freePosCrdShow(genPosArr, genPosAm);
     }
     return 0;
 }
