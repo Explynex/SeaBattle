@@ -414,21 +414,42 @@ void shiparoundC(int shipNum, char field[sz][szx]) {
                 if (field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != aliveSh && field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] != boarder)
                          field[sh[shipNum].y[i] + m][sh[shipNum].x[i] + n] = aroundSh;
 }
-
+ship SortShArr(ship arr, int n) {
+    for (int i = 1; i < n; i++) {
+        for (int j = i; j > 0 && arr.x[j - 1] > arr.x[j]; j--) {
+            int tmpx = arr.x[j - 1], tmpy = arr.y[j - 1];
+            arr.x[j - 1] = arr.x[j];
+            arr.x[j] = tmpx;
+            arr.y[j - 1] = arr.y[j];
+            arr.y[j] = tmpy;
+        }
+    }
+    for (int i = 1; i < n; i++) {
+        for (int j = i; j > 0 && arr.y[j - 1] > arr.y[j]; j--) {
+            int tmpx = arr.x[j - 1], tmpy = arr.y[j - 1];
+            arr.x[j - 1] = arr.x[j];
+            arr.x[j] = tmpx;
+            arr.y[j - 1] = arr.y[j];
+            arr.y[j] = tmpy;
+        }
+    }
+    return arr;
+}
 bool trueship(int curramofblocks)
 {
     if (curramofblocks == 1)
         return true;
     int ok = 0;
     bool paraleltoOX = false, paraleltoOY = false;
+    ship currship = SortShArr(sh[currAmofShips - 1], curramofblocks);
     for (int i = 0; i < curramofblocks - 1; i++)
     {
-        if ((sh[currAmofShips - 1].x[i] - sh[currAmofShips - 1].x[i + 1]) == 0 && abs(sh[currAmofShips - 1].y[i] - sh[currAmofShips - 1].y[i + 1]) == 1 && !paraleltoOX)
+        if ((currship.x[i] - currship.x[i + 1]) == 0 && abs(currship.y[i] - currship.y[i + 1]) == 1 && !paraleltoOX)
         {
             paraleltoOY = true;
             ok++;
         }
-        if ((sh[currAmofShips - 1].y[i] - sh[currAmofShips - 1].y[i + 1]) == 0 && abs(sh[currAmofShips - 1].x[i] - sh[currAmofShips - 1].x[i + 1]) == 1 && !paraleltoOY)
+        if ((currship.y[i] - currship.y[i + 1]) == 0 && abs(currship.x[i] - currship.x[i + 1]) == 1 && !paraleltoOY)
         {
             paraleltoOX = true;
             ok++;
