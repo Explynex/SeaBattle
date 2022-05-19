@@ -678,7 +678,6 @@ void propManager(bool save) {
     }
 }
 
-// refactoring complete
 void loadFromFile() { 
     system("cls");
     const std::string directory = "C:\\Users\\" + utf.getPath("username") + "\\Documents\\SeaBattle\\Saves\\";
@@ -774,7 +773,6 @@ void loadFromFile() {
     }
 }
 
-//refactoring complete
 void AI(std::string mode)
 {
     game = true;
@@ -807,20 +805,16 @@ void AI(std::string mode)
 void randFieldIntegrator(char genField[sz][szx], int start)
 {
     int m = 0;
-    for (int i = 0; i < sz; i++)
-    {
+    for (int i = 0; i < sz; i++){
         for (int k = 0; k < sz; k++)
-        {
             if (genField[i][k] == aroundSh)
                 genField[i][k] = ocean;
-        }
+        
     }
-    for (int i = start; i < start + 10; i++)
-    {
+    for (int i = start; i < start + 10; i++){
         sh[i].length = shgen[m].length;
         sh[i].hp = shgen[m].length;
-        for (int k = 0; k < shgen[m].length; k++)
-        {
+        for (int k = 0; k < shgen[m].length; k++){
             sh[i].x[k] = shgen[m].x[k];
             sh[i].y[k] = shgen[m].y[k];
         }
@@ -828,6 +822,7 @@ void randFieldIntegrator(char genField[sz][szx], int start)
 
     }
 }
+
 void shiparound(int shipNum, char genField[sz][szx])
 {
     for (int i = 0; i < shgen[shipNum].length; i++)
@@ -839,6 +834,7 @@ void shiparound(int shipNum, char genField[sz][szx])
                     genPosAm = freePosCrdDeleter(shgen[shipNum].x[i] + n, shgen[shipNum].y[i] + m, genPosArr, genPosAm);
                 }
 }
+
 int generator(std::string whose,int shipNum, char genField[sz][szx])
 {
     int direction = 0, x, y, dx1 = 1, dx2 = 1, dx3 = 1, dx4 = 1, xOld, yOld,lagfinder=0;
@@ -941,51 +937,42 @@ int generator(std::string whose,int shipNum, char genField[sz][szx])
     }
     return 0;
 }
+
 void randomgen(std::string whose, char genField[sz][szx])
 {
     int curSh = 0;
     fieldBoarder(genField);
     freePosCrdFiller(genPosArr);
     genPosAm = 100;
-    for (int i = 4; i > 0; i--)
-    {
-        for (int k = 0; k < 5 - i; k++)
-        {
+    for (int i = 4; i > 0; i--){
+        for (int k = 0; k < 5 - i; k++){
             shgen[curSh].length = i;
             if (generator(whose, curSh, genField) == -1)
-            {
                 return;
-            }
-            //testgen(genField);
             curSh++;
         }
     }
-    if (whose == "player")
-        randFieldIntegrator(genField, 0);
-    else
-        randFieldIntegrator(genField, 10);
+    if (whose == "player")  randFieldIntegrator(genField, 0);
+    else  randFieldIntegrator(genField, 10);
 }
+
 void freePosCrdFiller(COORD* freePosCrdArr)
 {
-    for (int i = 0; i < sz - 2; i++)
-    {
-        for (int k = 0; k < szx - 2; k++)
-        {
+    for (int i = 0; i < sz - 2; i++){
+        for (int k = 0; k < szx - 2; k++){
             freePosCrdArr[k + i * 10].X = k + 1;
             freePosCrdArr[k + i * 10].Y = i + 1;
         }
     }
 }
+
 int freePosCrdDeleter(int x, int y, COORD* freePosCrdArr, int freePosCrdAm)
 {
     int delindex;
-    for (int i = 0; i < freePosCrdAm; i++)
-    {
-        if (freePosCrdArr[i].X == x && freePosCrdArr[i].Y == y)
-        {
+    for (int i = 0; i < freePosCrdAm; i++){
+        if (freePosCrdArr[i].X == x && freePosCrdArr[i].Y == y){
             delindex = i;
-            for (int k = delindex; k < freePosCrdAm; k++)
-            {
+            for (int k = delindex; k < freePosCrdAm; k++){
                 freePosCrdArr[k].X = freePosCrdArr[k + 1].X;
                 freePosCrdArr[k].Y = freePosCrdArr[k + 1].Y;
             }
