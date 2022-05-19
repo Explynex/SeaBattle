@@ -153,6 +153,13 @@
     <ClInclude Include="DevAttribute\devattribute.h" />
     <ClInclude Include="headers\core.h" />
     <ClInclude Include="headers\output.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SeaBattle.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
